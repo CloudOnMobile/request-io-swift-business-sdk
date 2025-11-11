@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager
+/.build
+/Packages
+Package.resolved
+.swiftpm/configuration/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.netrc
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+
+# OpenAPI Generated Files (regenerated on build)
+# Uncomment if you want to track generated code:
+# Sources/RequestIOClient/Generated/
+
+# Logs
+*.log

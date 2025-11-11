@@ -1,0 +1,7059 @@
+{
+  "components" : {
+    "schemas" : {
+      "RequestTypeRole" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "requestTypeID" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "roleID" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "approvalsRequired" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "OrderRequestCommentWithUserDTO" : {
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "nullable" : true
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "attachmentType" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "user" : {
+            "required" : [
+              "id",
+              "firstName",
+              "lastName"
+            ],
+            "properties" : {
+              "id" : {
+                "type" : "string",
+                "format" : "uuid"
+              },
+              "firstName" : {
+                "type" : "string"
+              },
+              "lastName" : {
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "attachmentMimeType" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "attachmentUrl" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "attachmentThumbnailUrl" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "attachmentSize" : {
+            "type" : "integer",
+            "nullable" : true
+          },
+          "attachmentFilename" : {
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "id",
+          "content",
+          "user"
+        ]
+      },
+      "AdminDashboardResponseDTO" : {
+        "type" : "object",
+        "properties" : {
+          "adminScope" : {
+            "$ref" : "#\/components\/schemas\/AdminScope",
+            "description" : "Scope del administrador (determina qué datos ve)"
+          },
+          "recentActivity" : {
+            "description" : "Actividad reciente del administrador actual",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/ActivityItemDTO"
+            },
+            "type" : "array"
+          },
+          "quickStats" : {
+            "$ref" : "#\/components\/schemas\/QuickStatsDTO"
+          },
+          "auditStats" : {
+            "$ref" : "#\/components\/schemas\/AdminAuditStatsResponseDTO",
+            "description" : "Estadísticas de auditoría completas (reutiliza DTO existente)"
+          },
+          "systemHealth" : {
+            "$ref" : "#\/components\/schemas\/SystemHealthDTO"
+          },
+          "generatedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Timestamp de generación del dashboard"
+          }
+        },
+        "required" : [
+          "quickStats",
+          "auditStats",
+          "systemHealth",
+          "recentActivity",
+          "generatedAt",
+          "adminScope"
+        ],
+        "description" : "DTO de respuesta principal del dashboard administrativo con todas las métricas consolidadas"
+      },
+      "AirportPage" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/AirportDTO"
+            }
+          },
+          "metadata" : {
+            "$ref" : "#\/components\/schemas\/PageMetadata"
+          }
+        }
+      },
+      "DeviceListDTO" : {
+        "type" : "object",
+        "properties" : {
+          "devices" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/DeviceTokenDTO"
+            },
+            "type" : "array"
+          },
+          "totalCount" : {
+            "type" : "integer"
+          },
+          "activeCount" : {
+            "type" : "integer"
+          },
+          "platformCounts" : {
+            "additionalProperties" : {
+              "type" : "integer"
+            },
+            "type" : "object"
+          }
+        },
+        "required" : [
+          "devices",
+          "totalCount",
+          "activeCount",
+          "platformCounts"
+        ]
+      },
+      "OrderPage" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/OrderDTO"
+            }
+          },
+          "metadata" : {
+            "$ref" : "#\/components\/schemas\/PageMetadata"
+          }
+        }
+      },
+      "RequestTypeWithRoleDTO" : {
+        "properties" : {
+          "requestTypeRole" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/RequestTypeRole"
+            }
+          },
+          "requestType" : {
+            "$ref" : "#\/components\/schemas\/RequestType"
+          }
+        },
+        "type" : "object"
+      },
+      "AdminNotificationEventType" : {
+        "description" : "Tipo de evento que genera la notificación administrativa",
+        "enum" : [
+          "admin_role_granted",
+          "admin_role_revoked",
+          "admin_role_expiring",
+          "admin_role_expired",
+          "system_health_degraded",
+          "system_health_recovered",
+          "system_config_changed",
+          "database_error",
+          "user_account_locked",
+          "user_password_reset_requested",
+          "suspicious_login_activity",
+          "caterer_rules_changed",
+          "order_cancelled",
+          "high_value_order",
+          "critical_action_performed",
+          "audit_log_anomaly",
+          "custom"
+        ],
+        "type" : "string"
+      },
+      "UserCreate" : {
+        "properties" : {
+          "firstName" : {
+            "minLength" : 2,
+            "maxLength" : 50,
+            "type" : "string"
+          },
+          "email" : {
+            "format" : "email",
+            "type" : "string"
+          },
+          "confirmPassword" : {
+            "type" : "string",
+            "format" : "password"
+          },
+          "lastName" : {
+            "type" : "string",
+            "minLength" : 2,
+            "maxLength" : 50
+          },
+          "requiredActivation" : {
+            "type" : "boolean",
+            "default" : true
+          },
+          "password" : {
+            "type" : "string",
+            "format" : "password",
+            "minLength" : 8
+          }
+        },
+        "required" : [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "confirmPassword"
+        ],
+        "type" : "object"
+      },
+      "DailyActivityDTO" : {
+        "required" : [
+          "date",
+          "actionsCount"
+        ],
+        "type" : "object",
+        "description" : "Actividad diaria para gráficas",
+        "properties" : {
+          "actionsCount" : {
+            "type" : "integer"
+          },
+          "date" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        }
+      },
+      "OrderRequestCommentDTO" : {
+        "properties" : {
+          "attachmentUrl" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "attachmentMimeType" : {
+            "nullable" : true,
+            "maxLength" : 100,
+            "type" : "string"
+          },
+          "content" : {
+            "minLength" : 1,
+            "type" : "string",
+            "maxLength" : 2000
+          },
+          "attachmentFilename" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "nullable" : true
+          },
+          "attachmentType" : {
+            "nullable" : true,
+            "type" : "string",
+            "enum" : [
+              "image",
+              "video",
+              "document",
+              "audio"
+            ]
+          },
+          "attachmentThumbnailUrl" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "attachmentSize" : {
+            "type" : "integer",
+            "nullable" : true
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "content"
+        ]
+      },
+      "AdminActivitySummaryDTO" : {
+        "properties" : {
+          "actionsCount" : {
+            "type" : "integer"
+          },
+          "modulesAffected" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/AdminScope"
+            },
+            "type" : "array"
+          },
+          "topCapabilities" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/CapabilityUsageDTO"
+            },
+            "type" : "array"
+          },
+          "admin" : {
+            "$ref" : "#\/components\/schemas\/AdminUserInfoDTO"
+          },
+          "lastActivity" : {
+            "type" : "string",
+            "format" : "date-time",
+            "nullable" : true
+          }
+        },
+        "description" : "Resumen de actividad de un administrador",
+        "type" : "object",
+        "required" : [
+          "admin",
+          "actionsCount",
+          "modulesAffected",
+          "topCapabilities"
+        ]
+      },
+      "HealthStatus" : {
+        "enum" : [
+          "healthy",
+          "degraded",
+          "unhealthy"
+        ],
+        "description" : "Estado de salud de un componente o del sistema",
+        "type" : "string"
+      },
+      "UpdateBusinessRulesDTO" : {
+        "type" : "object",
+        "properties" : {
+          "cancellationFeeLess6h" : {
+            "type" : "number"
+          },
+          "minCancellationFee" : {
+            "type" : "number"
+          },
+          "allowMechanicalFullRefund" : {
+            "type" : "boolean"
+          },
+          "freeCancellationHours" : {
+            "type" : "integer"
+          },
+          "cancellationFeeMore24h" : {
+            "type" : "number"
+          },
+          "allowWeatherFullRefund" : {
+            "type" : "boolean"
+          },
+          "catererCancellationCompensation" : {
+            "type" : "number"
+          },
+          "cancellationFee6To24h" : {
+            "type" : "number"
+          }
+        }
+      },
+      "TransitionResponseDTO" : {
+        "required" : [
+          "isValid"
+        ],
+        "properties" : {
+          "isValid" : {
+            "type" : "boolean"
+          },
+          "errorMessage" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "availableTransitions" : {
+            "nullable" : true,
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "type" : "object"
+      },
+      "CancelOrderDTO" : {
+        "type" : "object",
+        "properties" : {
+          "reason" : {
+            "enum" : [
+              "customer_request",
+              "weather",
+              "mechanical",
+              "other"
+            ],
+            "type" : "string"
+          },
+          "notes" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "reason"
+        ]
+      },
+      "CreateOrderDTO" : {
+        "required" : [
+          "catererId",
+          "airportId",
+          "scheduledDate",
+          "items"
+        ],
+        "type" : "object",
+        "properties" : {
+          "airportId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "flightNumber" : {
+            "type" : "string"
+          },
+          "scheduledDate" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "catererId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "items" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/OrderItemDTO"
+            },
+            "type" : "array"
+          }
+        }
+      },
+      "TimePeriod" : {
+        "enum" : [
+          "last_24_hours",
+          "last_7_days",
+          "last_30_days",
+          "last_90_days",
+          "custom"
+        ],
+        "type" : "string",
+        "description" : "Período de tiempo para filtros de estadísticas"
+      },
+      "DietaryRestrictionDTO" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "icon" : {
+            "type" : "string"
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "type" : "object"
+      },
+      "TransitionRequestDTO" : {
+        "properties" : {
+          "newStatus" : {
+            "enum" : [
+              "pending",
+              "inReview",
+              "accepted",
+              "denied"
+            ],
+            "type" : "string",
+            "description" : "El nuevo estado al que se quiere transicionar"
+          },
+          "comment" : {
+            "type" : "string",
+            "maxLength" : 500,
+            "nullable" : true,
+            "description" : "Comentario opcional sobre la transición"
+          }
+        },
+        "required" : [
+          "newStatus"
+        ],
+        "type" : "object"
+      },
+      "ActivityUserDTO" : {
+        "description" : "Usuario simplificado para mostrar en actividad",
+        "required" : [
+          "id",
+          "fullName",
+          "email"
+        ],
+        "properties" : {
+          "fullName" : {
+            "example" : "John Doe",
+            "type" : "string",
+            "description" : "Nombre completo del usuario"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string",
+            "description" : "ID del usuario"
+          },
+          "email" : {
+            "format" : "email",
+            "example" : "john.doe@example.com",
+            "description" : "Email del usuario",
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "User" : {
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [
+          "firstName",
+          "lastName",
+          "email"
+        ],
+        "type" : "object"
+      },
+      "OrderDTO" : {
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "totalAmount" : {
+            "type" : "number"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "catererId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "scheduledDate" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "airportId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "orderNumber" : {
+            "type" : "string"
+          },
+          "flightNumber" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "items" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/OrderItemDTO"
+            },
+            "type" : "array"
+          }
+        }
+      },
+      "CreateAirportDTO" : {
+        "type" : "object",
+        "required" : [
+          "icaoCode",
+          "name",
+          "city",
+          "country",
+          "latitude",
+          "longitude"
+        ],
+        "properties" : {
+          "icaoCode" : {
+            "type" : "string"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "iataCode" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AdminAuditStatsResponseDTO" : {
+        "type" : "object",
+        "description" : "Estadísticas agregadas de audit logs administrativos",
+        "properties" : {
+          "actionsByModule" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer"
+            }
+          },
+          "actionsByDay" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/DailyActivityDTO"
+            },
+            "type" : "array"
+          },
+          "totalActions" : {
+            "type" : "integer",
+            "description" : "Total de acciones en el período"
+          },
+          "topAdmins" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/AdminActivitySummaryDTO"
+            }
+          },
+          "dateRange" : {
+            "$ref" : "#\/components\/schemas\/DateRangeDTO"
+          },
+          "actionsByCapability" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer"
+            }
+          },
+          "uniqueAdmins" : {
+            "type" : "integer",
+            "description" : "Total de administradores únicos"
+          },
+          "recentActions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/AdminAuditLogResponseDTO"
+            }
+          }
+        },
+        "required" : [
+          "totalActions",
+          "uniqueAdmins",
+          "actionsByModule",
+          "actionsByCapability",
+          "actionsByDay",
+          "topAdmins",
+          "recentActions",
+          "dateRange"
+        ]
+      },
+      "CapabilityUsageDTO" : {
+        "required" : [
+          "capability",
+          "usageCount"
+        ],
+        "type" : "object",
+        "description" : "Uso de una capability específica",
+        "properties" : {
+          "capability" : {
+            "$ref" : "#\/components\/schemas\/AdminCapability"
+          },
+          "usageCount" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "MenuCategoryDTO" : {
+        "properties" : {
+          "children" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/MenuCategoryDTO"
+            }
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "integer"
+          },
+          "path" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "type" : "object"
+      },
+      "CancellationResponseDTO" : {
+        "properties" : {
+          "cancellationFee" : {
+            "type" : "number"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "orderId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "originalAmount" : {
+            "type" : "number"
+          },
+          "refundAmount" : {
+            "type" : "number"
+          }
+        },
+        "type" : "object"
+      },
+      "AirportDTO" : {
+        "type" : "object",
+        "properties" : {
+          "city" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "icaoCode" : {
+            "minLength" : 4,
+            "type" : "string",
+            "maxLength" : 4
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "longitude" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "active" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "iataCode" : {
+            "minLength" : 3,
+            "maxLength" : 3,
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DeviceTokenDTO" : {
+        "type" : "object",
+        "required" : [
+          "id",
+          "token",
+          "platform",
+          "environment",
+          "appVersion",
+          "deviceInfo",
+          "isActive"
+        ],
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "Token enmascarado por seguridad"
+          },
+          "platform" : {
+            "type" : "string",
+            "enum" : [
+              "ios",
+              "android",
+              "web"
+            ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "nullable" : true,
+            "format" : "date-time"
+          },
+          "deviceInfo" : {
+            "$ref" : "#\/components\/schemas\/DeviceInfo"
+          },
+          "lastUsedAt" : {
+            "format" : "date-time",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "createdAt" : {
+            "nullable" : true,
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          },
+          "environment" : {
+            "type" : "string",
+            "enum" : [
+              "development",
+              "production"
+            ]
+          },
+          "appVersion" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
+      "CustomerDTO" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "company" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ActivityItemDTO" : {
+        "description" : "Item de actividad reciente del administrador mostrado en timeline",
+        "type" : "object",
+        "required" : [
+          "auditLogId",
+          "activityType",
+          "title",
+          "description",
+          "targetModule",
+          "capability",
+          "performedAt",
+          "iconName",
+          "colorHex"
+        ],
+        "properties" : {
+          "colorHex" : {
+            "example" : "#007AFF",
+            "description" : "Color sugerido para la UI en formato hex",
+            "type" : "string"
+          },
+          "activityType" : {
+            "$ref" : "#\/components\/schemas\/ActivityType"
+          },
+          "iconName" : {
+            "type" : "string",
+            "description" : "Nombre del SF Symbol sugerido para la UI",
+            "example" : "person.fill.badge.minus"
+          },
+          "title" : {
+            "example" : "Reset Password",
+            "type" : "string",
+            "description" : "Título de la actividad (corto, para UI)"
+          },
+          "capability" : {
+            "$ref" : "#\/components\/schemas\/AdminCapability",
+            "description" : "Capability utilizada para la acción"
+          },
+          "auditLogId" : {
+            "format" : "uuid",
+            "description" : "ID del audit log relacionado",
+            "type" : "string"
+          },
+          "targetModule" : {
+            "$ref" : "#\/components\/schemas\/AdminScope",
+            "description" : "Módulo afectado"
+          },
+          "targetUser" : {
+            "$ref" : "#\/components\/schemas\/ActivityUserDTO",
+            "nullable" : true,
+            "description" : "Usuario objetivo (si aplica)"
+          },
+          "performedAt" : {
+            "format" : "date-time",
+            "description" : "Timestamp de la actividad",
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Descripción detallada de la actividad",
+            "example" : "Reset Password for John Doe"
+          }
+        }
+      },
+      "BusinessRulesDTO" : {
+        "properties" : {
+          "allowMechanicalFullRefund" : {
+            "type" : "boolean"
+          },
+          "allowWeatherFullRefund" : {
+            "type" : "boolean"
+          },
+          "cancellationFee6To24h" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "cancellationFeeMore24h" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "cancellationFeeLess6h" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "minCancellationFee" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "freeCancellationHours" : {
+            "type" : "integer"
+          },
+          "catererCancellationCompensation" : {
+            "type" : "number",
+            "format" : "double"
+          }
+        },
+        "type" : "object"
+      },
+      "MenuItemPage" : {
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/MenuItemDTO"
+            }
+          },
+          "metadata" : {
+            "$ref" : "#\/components\/schemas\/PageMetadata"
+          }
+        },
+        "type" : "object"
+      },
+      "UserRoleDTO" : {
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email"
+          },
+          "userid" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "roleId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "userRoleId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "roleName" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "requestTypeName" : {
+            "type" : "string"
+          },
+          "requestTypeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "userRoleId",
+          "lastName",
+          "firstName",
+          "email",
+          "userid",
+          "roleName",
+          "roleId",
+          "requestTypeName",
+          "requestTypeId"
+        ]
+      },
+      "UserRoleAssignmentDTO" : {
+        "required" : [
+          "userIds",
+          "roleId",
+          "requestTypeId"
+        ],
+        "properties" : {
+          "userIds" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          },
+          "roleId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "requestTypeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "type" : "object"
+      },
+      "CancellationFeeResponseDTO" : {
+        "type" : "object",
+        "properties" : {
+          "cancellationFee" : {
+            "type" : "number"
+          },
+          "originalAmount" : {
+            "type" : "number"
+          },
+          "refundAmount" : {
+            "type" : "number"
+          },
+          "feePercentage" : {
+            "type" : "number"
+          },
+          "hoursUntilScheduled" : {
+            "type" : "number"
+          }
+        }
+      },
+      "ComponentHealthDTO" : {
+        "required" : [
+          "status",
+          "message"
+        ],
+        "type" : "object",
+        "description" : "Estado de salud de un componente individual del sistema",
+        "properties" : {
+          "message" : {
+            "description" : "Mensaje descriptivo del estado",
+            "example" : "Database connection is healthy",
+            "type" : "string"
+          },
+          "responseTime" : {
+            "example" : 15.5,
+            "type" : "number",
+            "description" : "Tiempo de respuesta en milisegundos",
+            "format" : "double",
+            "nullable" : true
+          },
+          "details" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Detalles adicionales específicos del componente",
+            "nullable" : true
+          },
+          "status" : {
+            "$ref" : "#\/components\/schemas\/HealthStatus"
+          }
+        }
+      },
+      "RequestTypeDetailsDTO" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "userRoles" : {
+            "type" : "array",
+            "items" : {
+              "properties" : {
+                "email" : {
+                  "format" : "email",
+                  "type" : "string"
+                },
+                "roleId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "userId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "roleName" : {
+                  "type" : "string"
+                },
+                "userRoleId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "userName" : {
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            }
+          },
+          "requestTypeRoles" : {
+            "type" : "array",
+            "items" : {
+              "properties" : {
+                "approvalsRequired" : {
+                  "type" : "integer"
+                },
+                "roleId" : {
+                  "format" : "uuid",
+                  "type" : "string"
+                },
+                "roleName" : {
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "OrderRequestComment" : {
+        "type" : "object",
+        "required" : [
+          "id",
+          "content"
+        ],
+        "properties" : {
+          "attachmentSize" : {
+            "type" : "integer",
+            "nullable" : true
+          },
+          "attachmentFilename" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "attachmentMimeType" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "createdAt" : {
+            "nullable" : true,
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "attachmentUrl" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "attachmentType" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "attachmentThumbnailUrl" : {
+            "nullable" : true,
+            "type" : "string"
+          }
+        }
+      },
+      "Role" : {
+        "required" : [
+          "name"
+        ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MenuItemDTO" : {
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "dietaryRestrictions" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/DietaryRestrictionDTO"
+            },
+            "type" : "array"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "category" : {
+            "$ref" : "#\/components\/schemas\/MenuCategoryDTO"
+          },
+          "price" : {
+            "type" : "number"
+          }
+        },
+        "type" : "object"
+      },
+      "AdminNotificationsListResponseDTO" : {
+        "type" : "object",
+        "description" : "DTO de respuesta con lista paginada de notificaciones administrativas",
+        "required" : [
+          "notifications",
+          "pagination",
+          "unreadCount",
+          "generatedAt"
+        ],
+        "properties" : {
+          "notifications" : {
+            "description" : "Lista de notificaciones",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/AdminNotificationResponseDTO"
+            },
+            "type" : "array"
+          },
+          "unreadCount" : {
+            "type" : "integer",
+            "example" : 12,
+            "description" : "Contador total de notificaciones no leídas"
+          },
+          "pagination" : {
+            "$ref" : "#\/components\/schemas\/NotificationPaginationMetadata"
+          },
+          "generatedAt" : {
+            "format" : "date-time",
+            "description" : "Timestamp de generación de la respuesta",
+            "type" : "string"
+          }
+        }
+      },
+      "AdminNotificationPriority" : {
+        "type" : "string",
+        "description" : "Prioridad de la notificación administrativa",
+        "enum" : [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ]
+      },
+      "QuickStatsDTO" : {
+        "type" : "object",
+        "description" : "Estadísticas rápidas para widgets del dashboard con métricas de alto nivel",
+        "properties" : {
+          "pendingOrders" : {
+            "example" : 12,
+            "nullable" : true,
+            "description" : "Órdenes pendientes en AlmaVip (solo si tiene acceso al módulo)",
+            "type" : "integer"
+          },
+          "actionsLast24h" : {
+            "type" : "integer",
+            "example" : 47,
+            "description" : "Acciones administrativas en las últimas 24h"
+          },
+          "totalOrders" : {
+            "description" : "Total de órdenes en AlmaVip (solo si tiene acceso al módulo)",
+            "example" : 1580,
+            "nullable" : true,
+            "type" : "integer"
+          },
+          "activeUsers" : {
+            "description" : "Usuarios activos (isActive = true)",
+            "example" : 980,
+            "type" : "integer"
+          },
+          "systemUptimeSeconds" : {
+            "format" : "double",
+            "type" : "number",
+            "example" : 2592000,
+            "description" : "Uptime del sistema en segundos"
+          },
+          "appVersion" : {
+            "example" : "1.0.0",
+            "description" : "Versión de la aplicación",
+            "type" : "string"
+          },
+          "pendingActions" : {
+            "example" : 3,
+            "type" : "integer",
+            "description" : "Acciones pendientes de revisión (si aplica)"
+          },
+          "totalAdmins" : {
+            "type" : "integer",
+            "example" : 15,
+            "description" : "Total de administradores con AdminRole activo"
+          },
+          "totalCaterers" : {
+            "example" : 25,
+            "nullable" : true,
+            "type" : "integer",
+            "description" : "Total de caterers en AlmaVip (solo si tiene acceso al módulo)"
+          },
+          "totalUsers" : {
+            "type" : "integer",
+            "example" : 1250,
+            "description" : "Total de usuarios en el sistema"
+          },
+          "activeAdmins" : {
+            "type" : "integer",
+            "description" : "Administradores activos en las últimas 24h",
+            "example" : 8
+          }
+        },
+        "required" : [
+          "totalUsers",
+          "activeUsers",
+          "totalAdmins",
+          "activeAdmins",
+          "actionsLast24h",
+          "pendingActions",
+          "systemUptimeSeconds",
+          "appVersion"
+        ]
+      },
+      "UpdateDeviceStatusRequest" : {
+        "properties" : {
+          "isActive" : {
+            "type" : "boolean"
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "isActive"
+        ]
+      },
+      "CustomerPage" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/CustomerDTO"
+            },
+            "type" : "array"
+          },
+          "metadata" : {
+            "$ref" : "#\/components\/schemas\/PageMetadata"
+          }
+        }
+      },
+      "CreateCatererDTO" : {
+        "required" : [
+          "name",
+          "code",
+          "email"
+        ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "email" : {
+            "format" : "email",
+            "type" : "string"
+          },
+          "address" : {
+            "type" : "string"
+          }
+        }
+      },
+      "OrderRequestDTO" : {
+        "properties" : {
+          "title" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "requestTypeId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "scheduleAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "nullable" : true
+          },
+          "priority" : {
+            "$ref" : "#\/components\/schemas\/RequestPriority"
+          },
+          "description" : {
+            "type" : "string",
+            "minLength" : 1
+          },
+          "requiredPermission" : {
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "requestTypeId",
+          "title",
+          "description",
+          "priority"
+        ],
+        "type" : "object"
+      },
+      "CancellationPreviewDTO" : {
+        "properties" : {
+          "scheduledDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "orderTotal" : {
+            "format" : "double",
+            "type" : "number"
+          }
+        },
+        "required" : [
+          "orderTotal",
+          "scheduledDate"
+        ],
+        "type" : "object"
+      },
+      "TransitionOptionDTO" : {
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "requiresComment" : {
+            "type" : "boolean"
+          },
+          "estimatedDuration" : {
+            "nullable" : true,
+            "type" : "number"
+          }
+        },
+        "required" : [
+          "status",
+          "displayName",
+          "requiresComment"
+        ],
+        "type" : "object"
+      },
+      "UpdateAirportDTO" : {
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "AdminCapability" : {
+        "enum" : [
+          "viewUserDetails",
+          "resetPassword",
+          "activateAccount",
+          "deactivateAccount",
+          "unlockAccount",
+          "modifyUserRole",
+          "viewAuditLogs",
+          "viewSystemConfig",
+          "modifySystemConfig",
+          "manageCatererRules",
+          "manageCaterers"
+        ],
+        "type" : "string",
+        "description" : "Capacidades administrativas que puede tener un administrador"
+      },
+      "RequestTypeRoleDTO" : {
+        "required" : [
+          "approvalsRequired"
+        ],
+        "properties" : {
+          "requestTypeID" : {
+            "format" : "uuid",
+            "type" : "string",
+            "nullable" : true
+          },
+          "approvalsRequired" : {
+            "type" : "integer"
+          },
+          "roleID" : {
+            "type" : "string",
+            "format" : "uuid",
+            "nullable" : true
+          }
+        },
+        "type" : "object"
+      },
+      "Permission" : {
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "enum" : [
+              "admin",
+              "business",
+              "user"
+            ],
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "name",
+          "type"
+        ],
+        "type" : "object"
+      },
+      "RequestDTO" : {
+        "required" : [
+          "name"
+        ],
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "requestTypeRoles" : {
+            "type" : "array",
+            "items" : {
+              "properties" : {
+                "roleId" : {
+                  "format" : "uuid",
+                  "type" : "string"
+                },
+                "approvalsRequired" : {
+                  "type" : "integer"
+                }
+              },
+              "type" : "object"
+            }
+          },
+          "userRoles" : {
+            "items" : {
+              "properties" : {
+                "userId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "roleId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                }
+              },
+              "type" : "object"
+            },
+            "type" : "array"
+          }
+        },
+        "type" : "object"
+      },
+      "UpdateCatererDTO" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "address" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "OrderAuditLogResponse" : {
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "orderID" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "action" : {
+            "enum" : [
+              "created",
+              "status_changed",
+              "updated",
+              "comment_added",
+              "document_uploaded",
+              "assigned",
+              "unassigned",
+              "deleted",
+              "priority_changed",
+              "schedule_date_changed",
+              "title_changed",
+              "description_changed"
+            ],
+            "type" : "string"
+          },
+          "oldStatus" : {
+            "nullable" : true,
+            "type" : "string",
+            "enum" : [
+              "pending",
+              "inReview",
+              "accepted",
+              "denied"
+            ]
+          },
+          "metadata" : {
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "type" : "object"
+          },
+          "orderTitle" : {
+            "type" : "string"
+          },
+          "comment" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "userName" : {
+            "type" : "string"
+          },
+          "newStatus" : {
+            "type" : "string",
+            "enum" : [
+              "pending",
+              "inReview",
+              "accepted",
+              "denied"
+            ],
+            "nullable" : true
+          },
+          "userEmail" : {
+            "type" : "string",
+            "format" : "email"
+          }
+        },
+        "required" : [
+          "id",
+          "action",
+          "createdAt",
+          "userEmail",
+          "userName",
+          "orderTitle",
+          "orderID"
+        ]
+      },
+      "ResetPasswordData" : {
+        "properties" : {
+          "token" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string",
+            "format" : "password"
+          },
+          "confirmPassword" : {
+            "type" : "string",
+            "format" : "password"
+          }
+        },
+        "required" : [
+          "token",
+          "password",
+          "confirmPassword"
+        ],
+        "type" : "object"
+      },
+      "AvailableTransitionsDTO" : {
+        "properties" : {
+          "availableTransitions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/TransitionOptionDTO"
+            }
+          },
+          "currentStatus" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "currentStatus",
+          "availableTransitions"
+        ],
+        "type" : "object"
+      },
+      "NotificationPaginationMetadata" : {
+        "properties" : {
+          "hasNext" : {
+            "description" : "Indica si existe una página siguiente",
+            "type" : "boolean"
+          },
+          "totalItems" : {
+            "type" : "integer",
+            "description" : "Total de items en todas las páginas",
+            "example" : 89
+          },
+          "totalPages" : {
+            "description" : "Total de páginas disponibles",
+            "type" : "integer",
+            "example" : 5
+          },
+          "perPage" : {
+            "description" : "Items por página",
+            "example" : 20,
+            "type" : "integer"
+          },
+          "currentPage" : {
+            "example" : 1,
+            "description" : "Página actual",
+            "type" : "integer"
+          },
+          "hasPrevious" : {
+            "description" : "Indica si existe una página anterior",
+            "type" : "boolean"
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "currentPage",
+          "totalPages",
+          "totalItems",
+          "perPage",
+          "hasPrevious",
+          "hasNext"
+        ],
+        "description" : "Metadata de paginación para lista de notificaciones"
+      },
+      "UpdateOrderDTO" : {
+        "properties" : {
+          "flightNumber" : {
+            "type" : "string"
+          },
+          "items" : {
+            "items" : {
+              "$ref" : "#\/components\/schemas\/OrderItemDTO"
+            },
+            "type" : "array"
+          },
+          "scheduledDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "type" : "object"
+      },
+      "Error" : {
+        "properties" : {
+          "reason" : {
+            "type" : "string"
+          },
+          "error" : {
+            "type" : "boolean"
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "error",
+          "reason"
+        ]
+      },
+      "PaginationMetadataDTO" : {
+        "required" : [
+          "total",
+          "page",
+          "perPage",
+          "totalPages"
+        ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "description" : "Total de elementos"
+          },
+          "page" : {
+            "type" : "integer",
+            "description" : "Página actual"
+          },
+          "totalPages" : {
+            "description" : "Total de páginas",
+            "type" : "integer"
+          },
+          "perPage" : {
+            "description" : "Elementos por página",
+            "type" : "integer"
+          }
+        },
+        "description" : "Metadata de paginación"
+      },
+      "CreateCustomerDTO" : {
+        "required" : [
+          "email",
+          "firstName",
+          "lastName"
+        ],
+        "type" : "object",
+        "properties" : {
+          "lastName" : {
+            "type" : "string"
+          },
+          "company" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "email" : {
+            "format" : "email",
+            "type" : "string"
+          }
+        }
+      },
+      "AdminAuditLogResponseDTO" : {
+        "required" : [
+          "id",
+          "adminUser",
+          "action",
+          "targetModule",
+          "details",
+          "ipAddress",
+          "performedAt"
+        ],
+        "description" : "DTO de respuesta para un audit log individual",
+        "type" : "object",
+        "properties" : {
+          "action" : {
+            "$ref" : "#\/components\/schemas\/AdminCapability"
+          },
+          "adminUser" : {
+            "$ref" : "#\/components\/schemas\/AdminUserInfoDTO"
+          },
+          "targetModule" : {
+            "$ref" : "#\/components\/schemas\/AdminScope"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "ipAddress" : {
+            "type" : "string"
+          },
+          "details" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "performedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "targetUser" : {
+            "$ref" : "#\/components\/schemas\/AdminUserInfoDTO",
+            "nullable" : true
+          },
+          "targetUserId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          }
+        }
+      },
+      "UpdateCustomerDTO" : {
+        "type" : "object",
+        "properties" : {
+          "company" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "OrderItemDTO" : {
+        "properties" : {
+          "unitPrice" : {
+            "type" : "number"
+          },
+          "quantity" : {
+            "type" : "integer"
+          },
+          "menuItemId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "type" : "object"
+      },
+      "UserActivationDTO" : {
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email"
+          },
+          "activationToken" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "email",
+          "activationToken"
+        ],
+        "type" : "object"
+      },
+      "AdminScope" : {
+        "type" : "string",
+        "enum" : [
+          "global",
+          "core",
+          "almavip",
+          "system"
+        ],
+        "description" : "Scope del administrador que determina su nivel de acceso"
+      },
+      "RequestTypeDTO" : {
+        "type" : "object",
+        "required" : [
+          "name"
+        ],
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DeviceInfo" : {
+        "properties" : {
+          "appBuild" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "locale" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "timezone" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "model" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "osVersion" : {
+            "type" : "string",
+            "nullable" : true
+          }
+        },
+        "type" : "object"
+      },
+      "ValidationResponseDTO" : {
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "type" : "string"
+          },
+          "reason" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "userRole" : {
+            "type" : "string"
+          },
+          "to" : {
+            "type" : "string"
+          },
+          "isValid" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [
+          "from",
+          "to",
+          "isValid",
+          "userRole"
+        ]
+      },
+      "ClientTokenReponse" : {
+        "properties" : {
+          "token" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object",
+        "required" : [
+          "token"
+        ]
+      },
+      "RequestTypeStatusDTO" : {
+        "properties" : {
+          "status" : {
+            "enum" : [
+              "draft",
+              "published",
+              "archived"
+            ],
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "status"
+        ],
+        "type" : "object"
+      },
+      "DeactivateAllResponse" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "deactivatedCount" : {
+            "type" : "integer"
+          }
+        },
+        "required" : [
+          "deactivatedCount",
+          "message"
+        ],
+        "type" : "object"
+      },
+      "RequestType" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "name"
+        ]
+      },
+      "RequestPriority" : {
+        "enum" : [
+          "low",
+          "medium",
+          "high"
+        ],
+        "type" : "string"
+      },
+      "ActivityType" : {
+        "type" : "string",
+        "description" : "Tipo de actividad para clasificación en la UI",
+        "enum" : [
+          "user_management",
+          "system_config",
+          "audit_review",
+          "almavip_management",
+          "security_action",
+          "other"
+        ]
+      },
+      "MarkNotificationAsReadResponseDTO" : {
+        "required" : [
+          "success",
+          "notification",
+          "message"
+        ],
+        "description" : "DTO de respuesta al marcar una notificación como leída",
+        "properties" : {
+          "notification" : {
+            "$ref" : "#\/components\/schemas\/AdminNotificationResponseDTO",
+            "description" : "Notificación actualizada"
+          },
+          "message" : {
+            "example" : "Notification marked as read successfully",
+            "type" : "string",
+            "description" : "Mensaje de confirmación"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "Indica si la operación fue exitosa"
+          }
+        },
+        "type" : "object"
+      },
+      "UserRole" : {
+        "required" : [
+          "id"
+        ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "user" : {
+            "$ref" : "#\/components\/schemas\/User"
+          },
+          "role" : {
+            "$ref" : "#\/components\/schemas\/Role"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestType" : {
+            "$ref" : "#\/components\/schemas\/RequestType"
+          }
+        }
+      },
+      "OrderRequest" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "approvalStatus" : {
+            "type" : "string",
+            "enum" : [
+              "pending",
+              "inReview",
+              "accepted",
+              "denied"
+            ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "priority" : {
+            "type" : "string",
+            "enum" : [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "title" : {
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "title",
+          "approvalStatus"
+        ]
+      },
+      "CatererPage" : {
+        "type" : "object",
+        "properties" : {
+          "metadata" : {
+            "$ref" : "#\/components\/schemas\/PageMetadata"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#\/components\/schemas\/CatererDTO"
+            }
+          }
+        }
+      },
+      "UserToken" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string"
+          },
+          "expiresAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [
+          "token"
+        ]
+      },
+      "AdminUserInfoDTO" : {
+        "required" : [
+          "id",
+          "fullName",
+          "email"
+        ],
+        "type" : "object",
+        "description" : "Información resumida de un usuario para audit logs",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "fullName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string",
+            "format" : "email"
+          }
+        }
+      },
+      "RegisterDeviceRequest" : {
+        "type" : "object",
+        "properties" : {
+          "platform" : {
+            "description" : "Plataforma del dispositivo",
+            "enum" : [
+              "ios",
+              "android",
+              "web"
+            ],
+            "type" : "string"
+          },
+          "environment" : {
+            "description" : "Entorno de push notifications",
+            "enum" : [
+              "development",
+              "production"
+            ],
+            "type" : "string",
+            "nullable" : true
+          },
+          "deviceInfo" : {
+            "$ref" : "#\/components\/schemas\/DeviceInfo"
+          },
+          "token" : {
+            "description" : "Token único del dispositivo",
+            "type" : "string"
+          },
+          "appVersion" : {
+            "type" : "string",
+            "description" : "Versión de la aplicación"
+          }
+        },
+        "required" : [
+          "token",
+          "platform",
+          "appVersion",
+          "deviceInfo"
+        ]
+      },
+      "SystemHealthDTO" : {
+        "description" : "Estado de salud del sistema con indicadores de componentes críticos",
+        "type" : "object",
+        "required" : [
+          "status",
+          "database",
+          "authentication",
+          "lastCheck"
+        ],
+        "properties" : {
+          "lastCheck" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Timestamp de la última verificación"
+          },
+          "status" : {
+            "description" : "Estado general del sistema",
+            "$ref" : "#\/components\/schemas\/HealthStatus"
+          },
+          "storage" : {
+            "$ref" : "#\/components\/schemas\/ComponentHealthDTO",
+            "nullable" : true,
+            "description" : "Estado del almacenamiento \/ File system (opcional)"
+          },
+          "customChecks" : {
+            "description" : "Health checks personalizados por módulo",
+            "additionalProperties" : {
+              "$ref" : "#\/components\/schemas\/ComponentHealthDTO"
+            },
+            "type" : "object"
+          },
+          "authentication" : {
+            "description" : "Estado del sistema de autenticación",
+            "$ref" : "#\/components\/schemas\/ComponentHealthDTO"
+          },
+          "database" : {
+            "description" : "Estado de la conexión a la base de datos",
+            "$ref" : "#\/components\/schemas\/ComponentHealthDTO"
+          },
+          "email" : {
+            "$ref" : "#\/components\/schemas\/ComponentHealthDTO",
+            "description" : "Estado del sistema de email (opcional)",
+            "nullable" : true
+          }
+        }
+      },
+      "ForgotPasswordData" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email"
+          }
+        },
+        "required" : [
+          "email"
+        ]
+      },
+      "CreateRequestTypeDTO" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "requestTypeRoles" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "roleId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "approvalsRequired" : {
+                  "type" : "integer"
+                }
+              }
+            }
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "userRoles" : {
+            "type" : "array",
+            "items" : {
+              "properties" : {
+                "roleId" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                },
+                "userId" : {
+                  "format" : "uuid",
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            }
+          }
+        },
+        "required" : [
+          "name"
+        ]
+      },
+      "PageMetadata" : {
+        "properties" : {
+          "perPage" : {
+            "type" : "integer"
+          },
+          "total" : {
+            "type" : "integer"
+          },
+          "pageCount" : {
+            "type" : "integer"
+          },
+          "page" : {
+            "type" : "integer"
+          }
+        },
+        "type" : "object"
+      },
+      "UserRoleDeleteDTO" : {
+        "required" : [
+          "userRoleIds"
+        ],
+        "type" : "object",
+        "properties" : {
+          "userRoleIds" : {
+            "type" : "array",
+            "items" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "minItems" : 1
+          }
+        }
+      },
+      "HealthCheckDTO" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "enum" : [
+              "healthy",
+              "unhealthy"
+            ],
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "module" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DateRangeDTO" : {
+        "properties" : {
+          "endDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "description" : "Rango de fechas",
+        "type" : "object",
+        "required" : [
+          "startDate",
+          "endDate"
+        ]
+      },
+      "AdminNotificationResponseDTO" : {
+        "description" : "DTO de respuesta de una notificación administrativa individual",
+        "type" : "object",
+        "required" : [
+          "id",
+          "title",
+          "message",
+          "priority",
+          "module",
+          "eventType",
+          "isRead",
+          "createdAt",
+          "iconName",
+          "colorHex"
+        ],
+        "properties" : {
+          "message" : {
+            "description" : "Mensaje detallado de la notificación",
+            "example" : "Admin role 'core' granted to user john.doe@example.com",
+            "type" : "string"
+          },
+          "readAt" : {
+            "description" : "Fecha de lectura (null si no está leída)",
+            "format" : "date-time",
+            "type" : "string",
+            "nullable" : true
+          },
+          "title" : {
+            "description" : "Título corto de la notificación",
+            "example" : "New Admin Role Granted",
+            "type" : "string"
+          },
+          "eventType" : {
+            "$ref" : "#\/components\/schemas\/AdminNotificationEventType"
+          },
+          "iconName" : {
+            "description" : "Nombre del SF Symbol sugerido para la UI",
+            "example" : "person.badge.plus",
+            "type" : "string"
+          },
+          "colorHex" : {
+            "type" : "string",
+            "description" : "Color sugerido para la UI en formato hex",
+            "example" : "#007AFF"
+          },
+          "module" : {
+            "$ref" : "#\/components\/schemas\/AdminScope"
+          },
+          "isRead" : {
+            "type" : "boolean",
+            "description" : "Indica si la notificación ha sido leída"
+          },
+          "metadata" : {
+            "type" : "object",
+            "nullable" : true,
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Metadata adicional en formato clave-valor"
+          },
+          "relatedResourceType" : {
+            "nullable" : true,
+            "type" : "string",
+            "description" : "Tipo de recurso relacionado (opcional)",
+            "example" : "AdminRole"
+          },
+          "priority" : {
+            "$ref" : "#\/components\/schemas\/AdminNotificationPriority"
+          },
+          "createdAt" : {
+            "description" : "Fecha de creación de la notificación",
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "description" : "ID de la notificación",
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "relatedResourceId" : {
+            "description" : "ID del recurso relacionado (opcional)",
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          }
+        }
+      },
+      "TransitionRequest" : {
+        "type" : "object",
+        "required" : [
+          "newStatus"
+        ],
+        "properties" : {
+          "newStatus" : {
+            "enum" : [
+              "pending",
+              "inReview",
+              "accepted",
+              "denied"
+            ],
+            "type" : "string",
+            "description" : "El nuevo estado al que se quiere transicionar"
+          },
+          "comment" : {
+            "nullable" : true,
+            "type" : "string",
+            "maxLength" : 500,
+            "description" : "Comentario opcional sobre la transición"
+          }
+        }
+      },
+      "CatererDTO" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "address" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        }
+      },
+      "CreateMenuItemDTO" : {
+        "type" : "object",
+        "required" : [
+          "name",
+          "price",
+          "categoryId"
+        ],
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "dietaryRestrictions" : {
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "type" : "array"
+          },
+          "price" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "categoryId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "description" : "Utiliza un token JWT para la autenticación",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT",
+        "type" : "http"
+      },
+      "basicAuth" : {
+        "type" : "http",
+        "scheme" : "basic",
+        "description" : "Autenticación básica con email y contraseña"
+      }
+    },
+    "responses" : {
+      "ForbiddenError" : {
+        "description" : "Acción no permitida",
+        "content" : {
+          "application\/json" : {
+            "schema" : {
+              "$ref" : "#\/components\/schemas\/Error"
+            }
+          }
+        }
+      },
+      "UnauthorizedError" : {
+        "description" : "No autorizado",
+        "content" : {
+          "application\/json" : {
+            "schema" : {
+              "$ref" : "#\/components\/schemas\/Error"
+            }
+          }
+        }
+      },
+      "NotImplementedError" : {
+        "description" : "Funcionalidad aún no implementada",
+        "content" : {
+          "application\/json" : {
+            "schema" : {
+              "$ref" : "#\/components\/schemas\/Error"
+            }
+          }
+        }
+      },
+      "NotFoundError" : {
+        "content" : {
+          "application\/json" : {
+            "schema" : {
+              "$ref" : "#\/components\/schemas\/Error"
+            }
+          }
+        },
+        "description" : "Recurso no encontrado"
+      },
+      "BadRequestError" : {
+        "description" : "Datos de entrada inválidos",
+        "content" : {
+          "application\/json" : {
+            "schema" : {
+              "$ref" : "#\/components\/schemas\/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "openapi" : "3.1.0",
+  "paths" : {
+    "\/api\/v1\/permissions" : {
+      "get" : {
+        "tags" : [
+          "Permisos"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getAllPermissions",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de permisos obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/Permission"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "summary" : "Obtener todos los permisos",
+        "description" : "Obtiene una lista de todos los permisos disponibles"
+      }
+    },
+    "\/api\/v1\/auth\/refresh-token" : {
+      "post" : {
+        "description" : "Genera un nuevo token JWT a partir del token actual",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/ClientTokenReponse"
+                }
+              }
+            },
+            "description" : "Token refrescado exitosamente"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "operationId" : "refreshToken",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "Autenticación"
+        ],
+        "summary" : "Refrescar token"
+      }
+    },
+    "\/api\/v1\/requests\/{requestTypeID}" : {
+      "put" : {
+        "summary" : "Actualizar tipo de solicitud",
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RequestTypeDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestType"
+                }
+              }
+            },
+            "description" : "Tipo de solicitud actualizado exitosamente"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "description" : "Actualiza un tipo de solicitud existente",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "updateRequestType",
+        "parameters" : [
+          {
+            "name" : "requestTypeID",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "in" : "path",
+            "description" : "ID del tipo de solicitud"
+          }
+        ]
+      },
+      "delete" : {
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "description" : "Elimina un tipo de solicitud del sistema",
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "description" : "ID del tipo de solicitud",
+            "name" : "requestTypeID"
+          }
+        ],
+        "responses" : {
+          "204" : {
+            "description" : "Tipo de solicitud eliminado exitosamente"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "summary" : "Eliminar tipo de solicitud",
+        "operationId" : "deleteRequestType",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "get" : {
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Obtiene un tipo de solicitud específico por su ID",
+        "parameters" : [
+          {
+            "in" : "path",
+            "name" : "requestTypeID",
+            "required" : true,
+            "description" : "ID del tipo de solicitud",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ],
+        "operationId" : "getRequestTypeById",
+        "responses" : {
+          "200" : {
+            "description" : "Tipo de solicitud obtenido exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestType"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "summary" : "Obtener tipo de solicitud por ID"
+      }
+    },
+    "\/api\/v1\/order-requests\/available-request-types" : {
+      "get" : {
+        "operationId" : "getAvailableRequestTypes",
+        "summary" : "Tipos de solicitud disponibles",
+        "description" : "Obtiene los tipos de solicitud disponibles para el usuario",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/RequestType"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Lista de tipos de solicitud"
+          }
+        },
+        "tags" : [
+          "Órdenes"
+        ]
+      }
+    },
+    "\/api\/v1\/devices\/register" : {
+      "post" : {
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RegisterDeviceRequest"
+              }
+            }
+          }
+        },
+        "operationId" : "registerDevice",
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/DeviceTokenDTO"
+                }
+              }
+            },
+            "description" : "Dispositivo registrado exitosamente"
+          }
+        },
+        "summary" : "Registrar token de dispositivo",
+        "tags" : [
+          "Dispositivos"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Registra un nuevo token de dispositivo para notificaciones push"
+      }
+    },
+    "\/api\/v1\/requests\/full" : {
+      "post" : {
+        "summary" : "Crear un nuevo tipo de solicitud completo",
+        "description" : "Crea un nuevo tipo de solicitud con roles y usuarios asignados",
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateRequestTypeDTO"
+              }
+            }
+          }
+        },
+        "operationId" : "createRequestTypeFull",
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestType"
+                }
+              }
+            },
+            "description" : "Tipo de solicitud completo creado exitosamente"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/state-transitions\/{id}\/history" : {
+      "get" : {
+        "operationId" : "getOrderHistoryStateTransition",
+        "tags" : [
+          "Transiciones de Estado"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Retorna el historial completo de cambios y transiciones de una orden",
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "name" : "id",
+            "description" : "ID único de la orden",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/OrderAuditLogResponse"
+                  }
+                }
+              }
+            },
+            "description" : "Historial de auditoría de la orden"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "summary" : "Obtener historial de orden"
+      }
+    },
+    "\/api\/v1\/roles\/{roleID}" : {
+      "get" : {
+        "tags" : [
+          "Roles"
+        ],
+        "description" : "Obtiene los detalles de un rol por su ID",
+        "operationId" : "getRole",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "in" : "path",
+            "description" : "ID del rol",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "name" : "roleID",
+            "required" : true
+          }
+        ],
+        "summary" : "Obtener un rol específico",
+        "responses" : {
+          "200" : {
+            "description" : "Rol obtenido exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Role"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/almavip\/airports" : {
+      "get" : {
+        "description" : "Obtiene lista paginada de aeropuertos",
+        "tags" : [
+          "AlmaVip - Airports"
+        ],
+        "parameters" : [
+          {
+            "name" : "page",
+            "schema" : {
+              "default" : 1,
+              "type" : "integer"
+            },
+            "in" : "query"
+          },
+          {
+            "name" : "perPage",
+            "schema" : {
+              "type" : "integer",
+              "default" : 20
+            },
+            "in" : "query"
+          }
+        ],
+        "operationId" : "listAlmaVipAirports",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de aeropuertos",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AirportPage"
+                }
+              }
+            }
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Listar aeropuertos"
+      },
+      "post" : {
+        "operationId" : "createAlmaVipAirport",
+        "description" : "Registra un nuevo aeropuerto en el sistema",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateAirportDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AirportDTO"
+                }
+              }
+            },
+            "description" : "Aeropuerto creado"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        },
+        "tags" : [
+          "AlmaVip - Airports"
+        ],
+        "summary" : "Crear aeropuerto",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/almavip\/airports\/{id}" : {
+      "get" : {
+        "operationId" : "getAlmaVipAirport",
+        "tags" : [
+          "AlmaVip - Airports"
+        ],
+        "parameters" : [
+          {
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "required" : true,
+            "in" : "path",
+            "name" : "id"
+          }
+        ],
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Aeropuerto encontrado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AirportDTO"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Obtener aeropuerto",
+        "description" : "Obtiene los detalles de un aeropuerto específico",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "put" : {
+        "description" : "Actualiza la información de un aeropuerto",
+        "operationId" : "updateAlmaVipAirport",
+        "summary" : "Actualizar aeropuerto",
+        "tags" : [
+          "AlmaVip - Airports"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "name" : "id",
+            "in" : "path"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AirportDTO"
+                }
+              }
+            },
+            "description" : "Aeropuerto actualizado"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UpdateAirportDTO"
+              }
+            }
+          },
+          "required" : true
+        }
+      }
+    },
+    "\/api\/v1\/user-roles" : {
+      "post" : {
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "201" : {
+            "description" : "Rol asignado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/UserRole"
+                }
+              }
+            }
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "summary" : "Asignar rol a usuario",
+        "operationId" : "assignRole",
+        "description" : "Asigna un rol específico a un usuario",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UserRoleAssignmentDTO"
+              }
+            }
+          }
+        },
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "delete" : {
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UserRoleDeleteDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "description" : "Remueve un rol específico de un usuario",
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "removeRole",
+        "summary" : "Remover rol de usuario",
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "204" : {
+            "description" : "Rol removido exitosamente"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/almavip\/menu-items" : {
+      "post" : {
+        "description" : "Crea un nuevo ítem en el menú del caterer",
+        "operationId" : "createAlmaVipMenuItem",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateMenuItemDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "201" : {
+            "description" : "Ítem creado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/MenuItemDTO"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Crear ítem de menú",
+        "tags" : [
+          "AlmaVip - Menu"
+        ]
+      },
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "AlmaVip - Menu"
+        ],
+        "description" : "Obtiene lista de ítems de menú con filtros opcionales",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de ítems de menú",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/MenuItemPage"
+                }
+              }
+            }
+          }
+        },
+        "operationId" : "listAlmaVipMenuItems",
+        "parameters" : [
+          {
+            "name" : "page",
+            "in" : "query",
+            "schema" : {
+              "default" : 1,
+              "type" : "integer"
+            }
+          },
+          {
+            "in" : "query",
+            "name" : "perPage",
+            "schema" : {
+              "type" : "integer",
+              "default" : 20
+            }
+          },
+          {
+            "schema" : {
+              "type" : "string"
+            },
+            "in" : "query",
+            "name" : "category"
+          },
+          {
+            "in" : "query",
+            "name" : "dietaryRestrictions",
+            "schema" : {
+              "items" : {
+                "type" : "string"
+              },
+              "type" : "array"
+            }
+          }
+        ],
+        "summary" : "Listar ítems de menú"
+      }
+    },
+    "\/api\/v1\/requests\/{requestTypeID}\/roles" : {
+      "get" : {
+        "parameters" : [
+          {
+            "name" : "requestTypeID",
+            "in" : "path",
+            "description" : "ID del tipo de solicitud",
+            "required" : true,
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestTypeWithRoleDTO"
+                }
+              }
+            },
+            "description" : "Roles obtenidos exitosamente"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "operationId" : "getRequestTypeRoles",
+        "description" : "Obtiene los roles asociados a un tipo de solicitud específico",
+        "summary" : "Obtener roles asociados a un tipo de solicitud"
+      }
+    },
+    "\/api\/v1\/almavip\/caterers" : {
+      "get" : {
+        "summary" : "Listar caterers",
+        "description" : "Obtiene lista paginada de proveedores de catering",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de caterers",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CatererPage"
+                }
+              }
+            }
+          }
+        },
+        "parameters" : [
+          {
+            "name" : "page",
+            "in" : "query",
+            "schema" : {
+              "type" : "integer",
+              "default" : 1
+            }
+          },
+          {
+            "name" : "perPage",
+            "in" : "query",
+            "schema" : {
+              "default" : 20,
+              "type" : "integer"
+            }
+          },
+          {
+            "in" : "query",
+            "name" : "search",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        ],
+        "operationId" : "listAlmaVipCaterers",
+        "tags" : [
+          "AlmaVip - Caterers"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "post" : {
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "201" : {
+            "description" : "Caterer creado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CatererDTO"
+                }
+              }
+            }
+          }
+        },
+        "operationId" : "createAlmaVipCaterer",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateCatererDTO"
+              }
+            }
+          }
+        },
+        "summary" : "Crear proveedor de catering",
+        "tags" : [
+          "AlmaVip - Caterers"
+        ],
+        "description" : "Registra un nuevo proveedor de catering"
+      }
+    },
+    "\/api\/v1\/admin\/notifications" : {
+      "get" : {
+        "description" : "Obtiene lista paginada de notificaciones del administrador con filtros opcionales.\nSoporta filtrado por estado de lectura, prioridad, módulo y tipo de evento.\n\n**Paginación:** Default 20 items por página, máximo 100\n\n**Performance:** Target < 300ms",
+        "operationId" : "getAdminNotifications",
+        "tags" : [
+          "Admin Notifications"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "name" : "isRead",
+            "in" : "query",
+            "schema" : {
+              "type" : "boolean"
+            },
+            "required" : false,
+            "description" : "Filtrar por estado de lectura"
+          },
+          {
+            "description" : "Filtrar por prioridad",
+            "name" : "priority",
+            "in" : "query",
+            "required" : false,
+            "schema" : {
+              "type" : "string",
+              "enum" : [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            }
+          },
+          {
+            "in" : "query",
+            "name" : "module",
+            "description" : "Filtrar por módulo",
+            "required" : false,
+            "schema" : {
+              "enum" : [
+                "global",
+                "core",
+                "almavip",
+                "system"
+              ],
+              "type" : "string"
+            }
+          },
+          {
+            "schema" : {
+              "enum" : [
+                "admin_role_granted",
+                "admin_role_revoked",
+                "admin_role_expiring",
+                "admin_role_expired",
+                "system_health_degraded",
+                "system_health_recovered",
+                "system_config_changed",
+                "database_error",
+                "user_account_locked",
+                "user_password_reset_requested",
+                "suspicious_login_activity",
+                "caterer_rules_changed",
+                "order_cancelled",
+                "high_value_order",
+                "critical_action_performed",
+                "audit_log_anomaly",
+                "custom"
+              ],
+              "type" : "string"
+            },
+            "required" : false,
+            "description" : "Filtrar por tipo de evento",
+            "name" : "eventType",
+            "in" : "query"
+          },
+          {
+            "name" : "page",
+            "in" : "query",
+            "description" : "Número de página",
+            "schema" : {
+              "minimum" : 1,
+              "default" : 1,
+              "type" : "integer"
+            },
+            "required" : false
+          },
+          {
+            "name" : "perPage",
+            "in" : "query",
+            "schema" : {
+              "type" : "integer",
+              "default" : 20,
+              "maximum" : 100,
+              "minimum" : 1
+            },
+            "required" : false,
+            "description" : "Items por página"
+          }
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "500" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            },
+            "description" : "Error al obtener notificaciones"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AdminNotificationsListResponseDTO"
+                },
+                "example" : {
+                  "pagination" : {
+                    "currentPage" : 1,
+                    "totalPages" : 5,
+                    "totalItems" : 89,
+                    "perPage" : 20,
+                    "hasPrevious" : false,
+                    "hasNext" : true
+                  },
+                  "generatedAt" : "2025-01-22T10:30:00Z",
+                  "notifications" : [
+                    {
+                      "priority" : "medium",
+                      "metadata" : {
+                        "userName" : "John Doe"
+                      },
+                      "colorHex" : "#007AFF",
+                      "iconName" : "person.badge.plus",
+                      "readAt" : null,
+                      "message" : "Admin role 'core' granted to user john.doe@example.com",
+                      "title" : "New Admin Role Granted",
+                      "isRead" : false,
+                      "eventType" : "admin_role_granted",
+                      "relatedResourceType" : "AdminRole",
+                      "relatedResourceId" : "987e6543-e21b-32d1-b654-426614174321",
+                      "module" : "core",
+                      "id" : "123e4567-e89b-12d3-a456-426614174000",
+                      "createdAt" : "2025-01-22T10:30:00Z"
+                    }
+                  ],
+                  "unreadCount" : 12
+                }
+              }
+            },
+            "description" : "Lista de notificaciones obtenida exitosamente"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "summary" : "Obtener lista de notificaciones del administrador"
+      }
+    },
+    "\/api\/v1\/order-requests\/{orderID}\/transitions" : {
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AvailableTransitionsDTO"
+                }
+              }
+            },
+            "description" : "Lista de transiciones disponibles"
+          }
+        },
+        "operationId" : "getOrderTransitions",
+        "parameters" : [
+          {
+            "required" : true,
+            "description" : "ID de la orden",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "in" : "path",
+            "name" : "orderID"
+          }
+        ],
+        "description" : "Obtiene las transiciones de estado disponibles para una orden",
+        "summary" : "Transiciones disponibles",
+        "tags" : [
+          "Órdenes"
+        ]
+      }
+    },
+    "\/api\/v1\/almavip\/customers\/{id}" : {
+      "get" : {
+        "parameters" : [
+          {
+            "in" : "path",
+            "name" : "id",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Cliente encontrado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CustomerDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "operationId" : "getAlmaVipCustomer",
+        "summary" : "Obtener cliente VIP",
+        "description" : "Obtiene los detalles de un cliente VIP específico",
+        "tags" : [
+          "AlmaVip - Customers"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "delete" : {
+        "tags" : [
+          "AlmaVip - Customers"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Elimina un cliente VIP del sistema (soft delete)",
+        "summary" : "Eliminar cliente VIP",
+        "responses" : {
+          "204" : {
+            "description" : "Cliente eliminado"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "operationId" : "deleteAlmaVipCustomer",
+        "parameters" : [
+          {
+            "name" : "id",
+            "required" : true,
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "in" : "path"
+          }
+        ]
+      },
+      "put" : {
+        "description" : "Actualiza la información de un cliente VIP",
+        "summary" : "Actualizar cliente VIP",
+        "operationId" : "updateAlmaVipCustomer",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UpdateCustomerDTO"
+              }
+            }
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "in" : "path",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "name" : "id",
+            "required" : true
+          }
+        ],
+        "tags" : [
+          "AlmaVip - Customers"
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Cliente actualizado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CustomerDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/order-requests" : {
+      "post" : {
+        "tags" : [
+          "Órdenes"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Crea una nueva orden de solicitud",
+        "operationId" : "createOrder",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/OrderRequestDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "description" : "Orden creada exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequest"
+                }
+              }
+            }
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        },
+        "summary" : "Crear nueva orden"
+      },
+      "get" : {
+        "description" : "Obtiene la lista de órdenes según permisos del usuario",
+        "tags" : [
+          "Órdenes"
+        ],
+        "summary" : "Listar órdenes",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getAllOrders",
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/OrderRequest"
+                  }
+                }
+              }
+            },
+            "description" : "Lista de órdenes"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/user-roles\/{itemId}\/get-user-roles" : {
+      "get" : {
+        "parameters" : [
+          {
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "in" : "path",
+            "description" : "ID del usuario",
+            "name" : "itemId",
+            "required" : true
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Lista de roles del usuario",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/UserRole"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          }
+        },
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "description" : "Obtiene los roles asignados a un usuario",
+        "operationId" : "getUserRoles",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Obtener roles de usuario"
+      }
+    },
+    "\/api\/v1\/password\/forgot-password" : {
+      "post" : {
+        "description" : "Envía un email con token de reset de contraseña",
+        "responses" : {
+          "200" : {
+            "description" : "Email enviado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "properties" : {
+                    "message" : {
+                      "type" : "string"
+                    }
+                  },
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        },
+        "tags" : [
+          "Contraseñas"
+        ],
+        "operationId" : "forgotPassword",
+        "summary" : "Solicitar reset de contraseña",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/ForgotPasswordData"
+              }
+            }
+          }
+        }
+      }
+    },
+    "\/api\/v1\/almavip\/caterers\/{id}\/business-rules\/preview" : {
+      "post" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Preview de fee de cancelación",
+        "operationId" : "previewCancellationFee",
+        "tags" : [
+          "AlmaVip - Business Rules"
+        ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CancellationPreviewDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CancellationFeeResponseDTO"
+                }
+              }
+            },
+            "description" : "Preview del fee"
+          }
+        },
+        "description" : "Calcula el fee de cancelación sin aplicar la cancelación"
+      }
+    },
+    "\/api\/v1\/almavip\/orders" : {
+      "post" : {
+        "summary" : "Crear orden de catering",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "201" : {
+            "description" : "Orden creada",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "operationId" : "createAlmaVipOrder",
+        "description" : "Crea una nueva orden de catering para un vuelo",
+        "tags" : [
+          "AlmaVip - Orders"
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateOrderDTO"
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "listAlmaVipOrders",
+        "tags" : [
+          "AlmaVip - Orders"
+        ],
+        "description" : "Obtiene lista paginada de órdenes de catering",
+        "parameters" : [
+          {
+            "name" : "page",
+            "in" : "query",
+            "schema" : {
+              "default" : 1,
+              "type" : "integer"
+            }
+          },
+          {
+            "in" : "query",
+            "schema" : {
+              "type" : "integer",
+              "default" : 20
+            },
+            "name" : "perPage"
+          },
+          {
+            "schema" : {
+              "type" : "string"
+            },
+            "in" : "query",
+            "name" : "status"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Lista de órdenes",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderPage"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Listar órdenes"
+      }
+    },
+    "\/api\/v1\/users\/aboutMe" : {
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getAboutMe",
+        "tags" : [
+          "Usuarios"
+        ],
+        "description" : "Obtiene los datos del usuario autenticado",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/User"
+                }
+              }
+            },
+            "description" : "Información del usuario obtenida exitosamente"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "summary" : "Obtener información del usuario actual"
+      }
+    },
+    "\/api\/v1\/almavip\/caterers\/{id}\/business-rules" : {
+      "delete" : {
+        "responses" : {
+          "204" : {
+            "description" : "Reglas reseteadas"
+          }
+        },
+        "summary" : "Resetear reglas de negocio",
+        "description" : "Elimina las reglas personalizadas y vuelve a usar las reglas globales",
+        "operationId" : "resetCatererBusinessRules",
+        "tags" : [
+          "AlmaVip - Business Rules"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "required" : true,
+            "in" : "path",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ]
+      },
+      "put" : {
+        "parameters" : [
+          {
+            "required" : true,
+            "name" : "id",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "in" : "path"
+          }
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UpdateBusinessRulesDTO"
+              }
+            }
+          }
+        },
+        "summary" : "Actualizar reglas de negocio",
+        "operationId" : "updateCatererBusinessRules",
+        "tags" : [
+          "AlmaVip - Business Rules"
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Reglas actualizadas",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/BusinessRulesDTO"
+                }
+              }
+            }
+          }
+        },
+        "description" : "Actualiza las reglas de negocio personalizadas del caterer"
+      },
+      "get" : {
+        "tags" : [
+          "AlmaVip - Business Rules"
+        ],
+        "description" : "Obtiene las reglas de negocio personalizadas del caterer (cancelaciones, fees, etc.)",
+        "operationId" : "getCatererBusinessRules",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "in" : "path",
+            "name" : "id",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Reglas de negocio",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/BusinessRulesDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "summary" : "Obtener reglas de negocio del caterer"
+      }
+    },
+    "\/api\/v1\/devices\/deactivate-all" : {
+      "post" : {
+        "operationId" : "deactivateAllDevices",
+        "description" : "Desactiva todos los dispositivos del usuario actual",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Desactivar todos los dispositivos",
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "description" : "Todos los dispositivos desactivados exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/DeactivateAllResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags" : [
+          "Dispositivos"
+        ]
+      }
+    },
+    "\/api\/v1\/users\/activate-account\/{activationToken}" : {
+      "put" : {
+        "tags" : [
+          "Usuarios"
+        ],
+        "description" : "Activa una cuenta de usuario utilizando un token de activación",
+        "parameters" : [
+          {
+            "required" : true,
+            "in" : "path",
+            "name" : "activationToken",
+            "description" : "Token de activación único",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        ],
+        "summary" : "Activar cuenta de usuario",
+        "operationId" : "activateAccount",
+        "responses" : {
+          "200" : {
+            "description" : "Cuenta activada exitosamente"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/requests\/{requestTypeID}\/details" : {
+      "get" : {
+        "summary" : "Obtener detalles de un tipo de solicitud",
+        "responses" : {
+          "200" : {
+            "description" : "Detalles obtenidos exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestTypeDetailsDTO"
+                }
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "parameters" : [
+          {
+            "name" : "requestTypeID",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "description" : "ID del tipo de solicitud",
+            "in" : "path"
+          }
+        ],
+        "description" : "Obtiene los detalles completos de un tipo de solicitud, incluyendo roles y usuarios asignados",
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getRequestTypeDetails"
+      }
+    },
+    "\/api\/request-type-roles" : {
+      "post" : {
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RequestTypeRoleDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestTypeRole"
+                }
+              }
+            },
+            "description" : "Relación RequestType-Role creada exitosamente"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "summary" : "Crear relación RequestType-Role",
+        "description" : "Crea una nueva relación entre un tipo de solicitud y un rol",
+        "tags" : [
+          "RequestType-Role"
+        ],
+        "operationId" : "createRequestTypeRole",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getAllRequestTypeRoles",
+        "tags" : [
+          "RequestType-Role"
+        ],
+        "summary" : "Obtener todas las relaciones RequestType-Role",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de relaciones RequestType-Role obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/RequestTypeRole"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "description" : "Obtiene una lista de todas las relaciones entre tipos de solicitud y roles"
+      }
+    },
+    "\/api\/v1\/order-requests\/{orderID}" : {
+      "delete" : {
+        "tags" : [
+          "Órdenes"
+        ],
+        "description" : "Elimina una orden (soft delete)",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "204" : {
+            "description" : "Orden eliminada exitosamente"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "operationId" : "deleteOrder",
+        "summary" : "Eliminar orden",
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "description" : "ID de la orden",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "name" : "orderID"
+          }
+        ]
+      },
+      "get" : {
+        "description" : "Obtiene los detalles de una orden por ID",
+        "operationId" : "getOrder",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Orden obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequest"
+                }
+              }
+            }
+          }
+        },
+        "parameters" : [
+          {
+            "name" : "orderID",
+            "description" : "ID de la orden",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "summary" : "Obtener orden específica",
+        "tags" : [
+          "Órdenes"
+        ]
+      },
+      "put" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "updateOrder",
+        "parameters" : [
+          {
+            "in" : "path",
+            "description" : "ID de la orden",
+            "name" : "orderID",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "required" : true
+          }
+        ],
+        "summary" : "Actualizar orden",
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequest"
+                }
+              }
+            },
+            "description" : "Orden actualizada exitosamente"
+          }
+        },
+        "tags" : [
+          "Órdenes"
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/OrderRequestDTO"
+              }
+            }
+          }
+        },
+        "description" : "Actualiza los datos de una orden existente"
+      }
+    },
+    "\/api\/v1\/almavip\/caterers\/{id}" : {
+      "put" : {
+        "summary" : "Actualizar caterer",
+        "description" : "Actualiza la información de un caterer",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "required" : true
+          }
+        ],
+        "tags" : [
+          "AlmaVip - Caterers"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "updateAlmaVipCaterer",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UpdateCatererDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Caterer actualizado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CatererDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        }
+      },
+      "get" : {
+        "tags" : [
+          "AlmaVip - Caterers"
+        ],
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CatererDTO"
+                }
+              }
+            },
+            "description" : "Caterer encontrado"
+          }
+        },
+        "summary" : "Obtener caterer",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "required" : true
+          }
+        ],
+        "description" : "Obtiene los detalles de un caterer específico",
+        "operationId" : "getAlmaVipCaterer"
+      },
+      "delete" : {
+        "summary" : "Eliminar caterer",
+        "tags" : [
+          "AlmaVip - Caterers"
+        ],
+        "description" : "Elimina un caterer del sistema (soft delete)",
+        "parameters" : [
+          {
+            "required" : true,
+            "name" : "id",
+            "in" : "path",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "deleteAlmaVipCaterer",
+        "responses" : {
+          "204" : {
+            "description" : "Caterer eliminado"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/password\/reset-password" : {
+      "get" : {
+        "summary" : "Validar token de reset",
+        "description" : "Verifica si un token de reset es válido",
+        "operationId" : "validateResetToken",
+        "tags" : [
+          "Contraseñas"
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "200" : {
+            "description" : "Token válido"
+          }
+        },
+        "parameters" : [
+          {
+            "in" : "query",
+            "description" : "Token de reset",
+            "schema" : {
+              "type" : "string"
+            },
+            "name" : "token",
+            "required" : true
+          }
+        ]
+      },
+      "post" : {
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "description" : "Contraseña cambiada exitosamente"
+          }
+        },
+        "summary" : "Resetear contraseña",
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/ResetPasswordData"
+              }
+            }
+          },
+          "required" : true
+        },
+        "description" : "Cambia la contraseña usando el token de reset",
+        "operationId" : "resetPassword",
+        "tags" : [
+          "Contraseñas"
+        ]
+      }
+    },
+    "\/api\/v1\/order-requests\/chat\/comments\/{commentID}" : {
+      "delete" : {
+        "tags" : [
+          "Comentarios"
+        ],
+        "operationId" : "deleteComment",
+        "parameters" : [
+          {
+            "description" : "ID del comentario",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "required" : true,
+            "name" : "commentID",
+            "in" : "path"
+          }
+        ],
+        "summary" : "Eliminar comentario",
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "204" : {
+            "description" : "Comentario eliminado"
+          }
+        },
+        "description" : "Elimina un comentario (solo el autor puede eliminar)",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Obtiene un comentario específico por ID",
+        "summary" : "Obtener comentario",
+        "parameters" : [
+          {
+            "in" : "path",
+            "description" : "ID del comentario",
+            "required" : true,
+            "name" : "commentID",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Comentario obtenido",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequestComment"
+                }
+              }
+            }
+          }
+        },
+        "tags" : [
+          "Comentarios"
+        ],
+        "operationId" : "getComment"
+      }
+    },
+    "\/api\/v1\/almavip\/menu-categories" : {
+      "get" : {
+        "summary" : "Listar categorías de menú",
+        "operationId" : "listMenuCategories",
+        "tags" : [
+          "AlmaVip - Menu"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/MenuCategoryDTO"
+                  }
+                }
+              }
+            },
+            "description" : "Categorías de menú"
+          }
+        },
+        "description" : "Obtiene árbol jerárquico de categorías de menú"
+      }
+    },
+    "\/api\/v1\/users\/resend-activation-email" : {
+      "post" : {
+        "description" : "Reenvía el correo de activación a un usuario que no ha activado su cuenta",
+        "tags" : [
+          "Usuarios"
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Correo de activación enviado exitosamente"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "operationId" : "resendActivationEmail",
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UserActivationDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "summary" : "Reenviar email de activación"
+      }
+    },
+    "\/api\/request-type-roles\/{requestTypeRoleID}" : {
+      "put" : {
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "description" : "ID de la relación RequestType-Role",
+            "name" : "requestTypeRoleID",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RequestTypeRoleDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "tags" : [
+          "RequestType-Role"
+        ],
+        "summary" : "Actualizar relación RequestType-Role",
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Relación RequestType-Role actualizada exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestTypeRole"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        },
+        "operationId" : "updateRequestTypeRole",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Actualiza una relación existente entre tipo de solicitud y rol"
+      },
+      "delete" : {
+        "summary" : "Eliminar relación RequestType-Role",
+        "tags" : [
+          "RequestType-Role"
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Relación RequestType-Role eliminada exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "properties" : {
+                    "status" : {
+                      "example" : "ok",
+                      "type" : "string"
+                    }
+                  },
+                  "type" : "object"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "description" : "Elimina una relación entre tipo de solicitud y rol",
+        "parameters" : [
+          {
+            "required" : true,
+            "description" : "ID de la relación RequestType-Role",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "name" : "requestTypeRoleID",
+            "in" : "path"
+          }
+        ],
+        "operationId" : "deleteRequestTypeRole",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      },
+      "get" : {
+        "description" : "Obtiene una relación específica entre tipo de solicitud y rol por su ID",
+        "responses" : {
+          "200" : {
+            "description" : "Relación RequestType-Role obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestTypeRole"
+                }
+              }
+            }
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "description" : "ID de la relación RequestType-Role",
+            "name" : "requestTypeRoleID"
+          }
+        ],
+        "tags" : [
+          "RequestType-Role"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Obtener relación RequestType-Role por ID",
+        "operationId" : "getRequestTypeRoleById"
+      }
+    },
+    "\/api\/v1\/user-roles\/{itemId}\/get-assign-role" : {
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Obtener asignación de rol",
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "parameters" : [
+          {
+            "in" : "path",
+            "name" : "itemId",
+            "required" : true,
+            "description" : "ID del item",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "operationId" : "getAssignRole",
+        "responses" : {
+          "200" : {
+            "description" : "Información de asignación de rol",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/UserRole"
+                }
+              }
+            }
+          }
+        },
+        "description" : "Obtiene información de asignación de rol"
+      }
+    },
+    "\/api\/v1\/requests" : {
+      "post" : {
+        "operationId" : "createRequestTypeBasic",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RequestTypeDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "201" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestType"
+                }
+              }
+            },
+            "description" : "Tipo de solicitud creado exitosamente"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Crea un nuevo tipo de solicitud con información básica",
+        "summary" : "Crear un nuevo tipo de solicitud (básico)",
+        "tags" : [
+          "Tipos de Solicitud"
+        ]
+      }
+    },
+    "\/api\/v1\/admin\/notifications\/{notificationId}\/read" : {
+      "patch" : {
+        "operationId" : "markAdminNotificationAsRead",
+        "parameters" : [
+          {
+            "name" : "notificationId",
+            "required" : true,
+            "in" : "path",
+            "description" : "ID de la notificación a marcar como leída",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ],
+        "description" : "Marca una notificación como leída para el administrador actual.\nSolo el administrador destinatario puede marcar su notificación como leída.",
+        "summary" : "Marcar notificación como leída",
+        "responses" : {
+          "403" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            },
+            "description" : "Sin permisos (notificación no pertenece al admin)"
+          },
+          "404" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            },
+            "description" : "Notificación no encontrada"
+          },
+          "400" : {
+            "description" : "ID de notificación inválido",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Error al actualizar notificación",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            }
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "example" : {
+                  "success" : true,
+                  "message" : "Notification marked as read successfully",
+                  "notification" : {
+                    "createdAt" : "2025-01-22T10:30:00Z",
+                    "colorHex" : "#007AFF",
+                    "relatedResourceId" : "987e6543-e21b-32d1-b654-426614174321",
+                    "id" : "123e4567-e89b-12d3-a456-426614174000",
+                    "module" : "core",
+                    "isRead" : true,
+                    "relatedResourceType" : "AdminRole",
+                    "readAt" : "2025-01-22T10:35:00Z",
+                    "metadata" : {
+                      "userName" : "John Doe"
+                    },
+                    "title" : "New Admin Role Granted",
+                    "priority" : "medium",
+                    "eventType" : "admin_role_granted",
+                    "iconName" : "person.badge.plus",
+                    "message" : "Admin role 'core' granted to user john.doe@example.com"
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/MarkNotificationAsReadResponseDTO"
+                }
+              }
+            },
+            "description" : "Notificación marcada como leída exitosamente"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "Admin Notifications"
+        ]
+      }
+    },
+    "\/api\/v1\/admin\/dashboard\/quick-stats" : {
+      "get" : {
+        "description" : "Obtiene solo las estadísticas rápidas del dashboard. Endpoint optimizado\npara widgets de la home screen, refresh rápido y notificaciones con badge counts.\n\n**Performance:** Target < 200ms, payload ~2-5 KB\n\n**Uso ideal:** Widgets, pull-to-refresh, badge updates",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "200" : {
+            "description" : "Estadísticas rápidas obtenidas exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/QuickStatsDTO"
+                },
+                "example" : {
+                  "actionsLast24h" : 47,
+                  "totalAdmins" : 15,
+                  "totalCaterers" : 25,
+                  "totalOrders" : 1580,
+                  "activeAdmins" : 8,
+                  "pendingActions" : 3,
+                  "appVersion" : "1.0.0",
+                  "totalUsers" : 1250,
+                  "activeUsers" : 980,
+                  "systemUptimeSeconds" : 2592000,
+                  "pendingOrders" : 12
+                }
+              }
+            }
+          }
+        },
+        "operationId" : "getAdminQuickStats",
+        "tags" : [
+          "Admin Dashboard"
+        ],
+        "summary" : "Obtener estadísticas rápidas (lightweight)"
+      }
+    },
+    "\/api\/v1\/user-roles\/{itemId}\/get-request-user-roles" : {
+      "get" : {
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "description" : "Obtiene los roles de usuario para un tipo de solicitud específico",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/UserRole"
+                  }
+                }
+              }
+            },
+            "description" : "Lista de roles para el tipo de solicitud"
+          }
+        },
+        "summary" : "Obtener roles para tipo de solicitud",
+        "parameters" : [
+          {
+            "in" : "path",
+            "description" : "ID del tipo de solicitud",
+            "name" : "itemId",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "operationId" : "getRequestUserRoles"
+      }
+    },
+    "\/api\/v1\/devices" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "Lista de dispositivos obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/DeviceListDTO"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "operationId" : "listDevices",
+        "tags" : [
+          "Dispositivos"
+        ],
+        "summary" : "Listar dispositivos del usuario",
+        "parameters" : [
+          {
+            "description" : "Incluir dispositivos inactivos",
+            "schema" : {
+              "default" : false,
+              "type" : "boolean"
+            },
+            "in" : "query",
+            "required" : false,
+            "name" : "includeInactive"
+          }
+        ],
+        "description" : "Obtiene la lista de dispositivos registrados para el usuario actual",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/roles" : {
+      "get" : {
+        "description" : "Obtiene una lista de todos los roles disponibles",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "Roles"
+        ],
+        "summary" : "Obtener todos los roles",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de roles obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/Role"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "operationId" : "getAllRoles"
+      }
+    },
+    "\/api\/v1\/almavip\/orders\/{id}\/cancel" : {
+      "post" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "required" : true,
+            "name" : "id",
+            "in" : "path"
+          }
+        ],
+        "summary" : "Cancelar orden",
+        "description" : "Cancela una orden y calcula fees de cancelación según reglas del caterer",
+        "tags" : [
+          "AlmaVip - Orders"
+        ],
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CancellationResponseDTO"
+                }
+              }
+            },
+            "description" : "Orden cancelada"
+          }
+        },
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CancelOrderDTO"
+              }
+            }
+          }
+        },
+        "operationId" : "cancelAlmaVipOrder"
+      }
+    },
+    "\/api\/v1\/devices\/{tokenID}\/activate" : {
+      "patch" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Activar dispositivo",
+        "operationId" : "activateDevice",
+        "description" : "Activa un dispositivo previamente desactivado",
+        "parameters" : [
+          {
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "in" : "path",
+            "name" : "tokenID",
+            "description" : "ID del token de dispositivo",
+            "required" : true
+          }
+        ],
+        "tags" : [
+          "Dispositivos"
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Dispositivo activado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/DeviceTokenDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "\/api\/v1\/order-requests\/{orderID}\/validate-transition" : {
+      "post" : {
+        "operationId" : "validateTransition",
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/TransitionRequestDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "description" : "Valida si una transición de estado es permitida",
+        "responses" : {
+          "200" : {
+            "description" : "Resultado de validación",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/ValidationResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Validar transición",
+        "tags" : [
+          "Órdenes"
+        ],
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "description" : "ID de la orden",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "name" : "orderID"
+          }
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/almavip\/customers" : {
+      "post" : {
+        "summary" : "Crear cliente VIP",
+        "description" : "Crea un nuevo cliente VIP en el sistema AlmaVip",
+        "operationId" : "createAlmaVipCustomer",
+        "tags" : [
+          "AlmaVip - Customers"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/CreateCustomerDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "201" : {
+            "description" : "Cliente creado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CustomerDTO"
+                }
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        }
+      },
+      "get" : {
+        "description" : "Obtiene lista paginada de clientes VIP",
+        "tags" : [
+          "AlmaVip - Customers"
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/CustomerPage"
+                }
+              }
+            },
+            "description" : "Lista de clientes"
+          }
+        },
+        "parameters" : [
+          {
+            "name" : "page",
+            "schema" : {
+              "default" : 1,
+              "type" : "integer"
+            },
+            "in" : "query"
+          },
+          {
+            "in" : "query",
+            "name" : "perPage",
+            "schema" : {
+              "default" : 20,
+              "type" : "integer"
+            }
+          },
+          {
+            "schema" : {
+              "type" : "string"
+            },
+            "name" : "search",
+            "in" : "query"
+          }
+        ],
+        "summary" : "Listar clientes VIP",
+        "operationId" : "listAlmaVipCustomers",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/almavip\/airports\/search" : {
+      "get" : {
+        "parameters" : [
+          {
+            "name" : "query",
+            "schema" : {
+              "type" : "string"
+            },
+            "required" : true,
+            "in" : "query"
+          },
+          {
+            "name" : "page",
+            "in" : "query",
+            "schema" : {
+              "type" : "integer",
+              "default" : 1
+            }
+          },
+          {
+            "name" : "perPage",
+            "in" : "query",
+            "schema" : {
+              "default" : 20,
+              "type" : "integer"
+            }
+          }
+        ],
+        "summary" : "Buscar aeropuertos",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AirportPage"
+                }
+              }
+            },
+            "description" : "Resultados de búsqueda"
+          }
+        },
+        "description" : "Busca aeropuertos por código ICAO, IATA, nombre o ciudad",
+        "operationId" : "searchAlmaVipAirports",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "AlmaVip - Airports"
+        ]
+      }
+    },
+    "\/api\/v1\/state-transitions\/{id}\/transitions" : {
+      "get" : {
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AvailableTransitionsDTO"
+                }
+              }
+            },
+            "description" : "Lista de transiciones disponibles"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "tags" : [
+          "Transiciones de Estado"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getAvailableTransitionsStateTransition",
+        "summary" : "Obtener transiciones disponibles",
+        "description" : "Retorna las transiciones de estado disponibles para el usuario actual en una orden específica",
+        "parameters" : [
+          {
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "description" : "ID único de la orden",
+            "name" : "id",
+            "required" : true,
+            "in" : "path"
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/devices\/{tokenID}\/deactivate" : {
+      "patch" : {
+        "summary" : "Desactivar dispositivo",
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/DeviceTokenDTO"
+                }
+              }
+            },
+            "description" : "Dispositivo desactivado exitosamente"
+          }
+        },
+        "operationId" : "deactivateDevice",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Desactiva un dispositivo sin eliminarlo del sistema",
+        "parameters" : [
+          {
+            "in" : "path",
+            "required" : true,
+            "name" : "tokenID",
+            "description" : "ID del token de dispositivo",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "tags" : [
+          "Dispositivos"
+        ]
+      }
+    },
+    "\/api\/v1\/order-requests\/chat\/{orderID}\/comments" : {
+      "post" : {
+        "description" : "Agrega un comentario a una orden",
+        "operationId" : "createComment",
+        "summary" : "Crear comentario",
+        "parameters" : [
+          {
+            "in" : "path",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "required" : true,
+            "name" : "orderID",
+            "description" : "ID de la orden"
+          }
+        ],
+        "tags" : [
+          "Comentarios"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/OrderRequestCommentDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Comentario creado",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequestComment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "getComments",
+        "responses" : {
+          "200" : {
+            "description" : "Lista de comentarios",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/OrderRequestCommentWithUserDTO"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          }
+        },
+        "description" : "Obtiene todos los comentarios de una orden",
+        "summary" : "Listar comentarios",
+        "tags" : [
+          "Comentarios"
+        ],
+        "parameters" : [
+          {
+            "required" : true,
+            "name" : "orderID",
+            "in" : "path",
+            "description" : "ID de la orden",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/order-requests\/{orderID}\/status" : {
+      "put" : {
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/TransitionRequestDTO"
+              }
+            }
+          }
+        },
+        "description" : "Ejecuta una transición de estado en la orden",
+        "tags" : [
+          "Órdenes"
+        ],
+        "summary" : "Cambiar estado de orden",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequest"
+                }
+              }
+            },
+            "description" : "Estado actualizado"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          }
+        },
+        "operationId" : "updateOrderStatus",
+        "parameters" : [
+          {
+            "name" : "orderID",
+            "description" : "ID de la orden",
+            "in" : "path",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "required" : true
+          }
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/almavip\/health" : {
+      "get" : {
+        "tags" : [
+          "AlmaVip - System"
+        ],
+        "summary" : "Health check de AlmaVip",
+        "responses" : {
+          "200" : {
+            "description" : "Módulo saludable",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/HealthCheckDTO"
+                }
+              }
+            }
+          }
+        },
+        "description" : "Verifica el estado del módulo AlmaVip",
+        "operationId" : "almaVipHealthCheck"
+      }
+    },
+    "\/api\/v1\/admin\/dashboard\/health" : {
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Obtiene solo el estado de salud del sistema. Endpoint optimizado\npara monitoring automático, status indicators y health checks desde mobile.\n\n**Performance:** Target < 300ms, payload ~3-8 KB\n\n**Uso ideal:** Monitoring, status indicators, automated health checks",
+        "summary" : "Obtener estado de salud del sistema (lightweight)",
+        "tags" : [
+          "Admin Dashboard"
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Estado de salud obtenido exitosamente",
+            "content" : {
+              "application\/json" : {
+                "example" : {
+                  "lastCheck" : "2025-01-22T10:30:00Z",
+                  "authentication" : {
+                    "status" : "healthy",
+                    "responseTime" : 8.1999999999999993,
+                    "message" : "Authentication system operational"
+                  },
+                  "database" : {
+                    "status" : "healthy",
+                    "responseTime" : 15.5,
+                    "details" : {
+                      "activeConnections" : "5",
+                      "maxConnections" : "100"
+                    },
+                    "message" : "Database connection is healthy"
+                  },
+                  "customChecks" : {
+
+                  },
+                  "email" : {
+                    "message" : "SMTP server reachable",
+                    "responseTime" : 120.5,
+                    "status" : "healthy"
+                  },
+                  "status" : "healthy"
+                },
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/SystemHealthDTO"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "operationId" : "getAdminSystemHealth"
+      }
+    },
+    "\/api\/v1\/auth" : {
+      "post" : {
+        "description" : "Autentica un usuario mediante Basic Auth y retorna un token JWT. Las credenciales deben enviarse en el header Authorization usando Basic Auth (username = email, password = contraseña del usuario). NO enviar credenciales en el body.",
+        "security" : [
+          {
+            "basicAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "Autenticación"
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/ClientTokenReponse"
+                }
+              }
+            },
+            "description" : "Login exitoso"
+          }
+        },
+        "summary" : "Iniciar sesión",
+        "operationId" : "login"
+      },
+      "get" : {
+        "operationId" : "loginPage",
+        "description" : "Retorna la página HTML de login",
+        "tags" : [
+          "Autenticación"
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text\/html" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "Página HTML de login"
+          }
+        },
+        "summary" : "Página de login"
+      }
+    },
+    "\/api\/v1\/requests\/{requestTypeID}\/manageState" : {
+      "put" : {
+        "operationId" : "updateRequestTypeState",
+        "summary" : "Actualizar estado de un tipo de solicitud",
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Estado actualizado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/RequestType"
+                }
+              }
+            }
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/RequestTypeStatusDTO"
+              }
+            }
+          }
+        },
+        "parameters" : [
+          {
+            "name" : "requestTypeID",
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "in" : "path",
+            "required" : true,
+            "description" : "ID del tipo de solicitud"
+          }
+        ],
+        "description" : "Actualiza el estado de publicación de un tipo de solicitud",
+        "tags" : [
+          "Tipos de Solicitud"
+        ]
+      }
+    },
+    "\/api\/v1\/requests\/all" : {
+      "get" : {
+        "summary" : "Obtener todos los tipos de solicitud",
+        "description" : "Obtiene una lista de todos los tipos de solicitud disponibles",
+        "operationId" : "getAllRequestTypes",
+        "tags" : [
+          "Tipos de Solicitud"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "200" : {
+            "description" : "Lista de tipos de solicitud obtenida exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/RequestType"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "\/api\/v1\/state-transitions\/{id}\/status" : {
+      "put" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "tags" : [
+          "Transiciones de Estado"
+        ],
+        "parameters" : [
+          {
+            "required" : true,
+            "name" : "id",
+            "in" : "path",
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "description" : "ID único de la orden"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/TransitionRequestDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "description" : "Cambia el estado de una orden validando permisos del usuario y registrando en auditoría",
+        "summary" : "Actualizar estado de orden",
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          },
+          "200" : {
+            "description" : "Estado actualizado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderRequest"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "501" : {
+            "$ref" : "#\/components\/responses\/NotImplementedError"
+          }
+        },
+        "operationId" : "updateOrderStatusStateTransition"
+      }
+    },
+    "\/api\/v1\/order-requests\/{orderID}\/history" : {
+      "get" : {
+        "description" : "Obtiene el historial de cambios de una orden",
+        "tags" : [
+          "Órdenes"
+        ],
+        "parameters" : [
+          {
+            "name" : "orderID",
+            "in" : "path",
+            "description" : "ID de la orden",
+            "required" : true,
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Historial de cambios",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/OrderAuditLogResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          }
+        },
+        "operationId" : "getOrderHistory",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Historial de orden"
+      }
+    },
+    "\/api\/v1\/order-requests\/my-available-request-types" : {
+      "get" : {
+        "summary" : "Mis tipos de solicitud",
+        "tags" : [
+          "Órdenes"
+        ],
+        "description" : "Obtiene los tipos de solicitud asignados al usuario actual",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/RequestType"
+                  }
+                }
+              }
+            },
+            "description" : "Lista de tipos de solicitud del usuario"
+          }
+        },
+        "operationId" : "getMyAvailableRequestTypes"
+      }
+    },
+    "\/api\/v1\/users" : {
+      "post" : {
+        "responses" : {
+          "400" : {
+            "$ref" : "#\/components\/responses\/BadRequestError"
+          },
+          "200" : {
+            "description" : "Usuario creado exitosamente",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/User"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Crear un nuevo usuario",
+        "tags" : [
+          "Usuarios"
+        ],
+        "description" : "Crea un nuevo usuario en el sistema",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UserCreate"
+              }
+            }
+          }
+        },
+        "operationId" : "createUser"
+      },
+      "get" : {
+        "tags" : [
+          "Usuarios"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Obtener todos los usuarios",
+        "description" : "Obtiene una lista de todos los usuarios registrados",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/User"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "Lista de usuarios obtenida exitosamente"
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          }
+        },
+        "operationId" : "getAllUsers"
+      }
+    },
+    "\/api\/v1\/admin\/dashboard" : {
+      "get" : {
+        "description" : "Obtiene el dashboard completo con todas las métricas, estadísticas de auditoría,\nestado de salud del sistema y actividad reciente. Optimizado para consumo desde\naplicaciones móviles iOS\/macOS.\n\n**Performance:** Target < 500ms, payload ~50-100 KB comprimido\n\n**Seguridad:** Requiere JWT + AdminRole activo con capability viewAuditLogs",
+        "operationId" : "getAdminDashboard",
+        "summary" : "Obtener dashboard completo del administrador",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "parameters" : [
+          {
+            "required" : false,
+            "in" : "query",
+            "schema" : {
+              "default" : "last_30_days",
+              "enum" : [
+                "last_24_hours",
+                "last_7_days",
+                "last_30_days",
+                "last_90_days"
+              ],
+              "type" : "string"
+            },
+            "name" : "period",
+            "description" : "Período de tiempo para las estadísticas"
+          },
+          {
+            "required" : false,
+            "schema" : {
+              "type" : "boolean",
+              "default" : true
+            },
+            "description" : "Incluir métricas del módulo AlmaVip (solo si tiene acceso)",
+            "name" : "includeAlmaVipMetrics",
+            "in" : "query"
+          }
+        ],
+        "responses" : {
+          "500" : {
+            "description" : "Error al generar dashboard",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/Error"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Dashboard obtenido exitosamente",
+            "content" : {
+              "application\/json" : {
+                "examples" : {
+                  "globalAdmin" : {
+                    "value" : {
+                      "quickStats" : {
+                        "pendingOrders" : 12,
+                        "totalCaterers" : 25,
+                        "systemUptimeSeconds" : 2592000,
+                        "appVersion" : "1.0.0",
+                        "totalUsers" : 1250,
+                        "activeUsers" : 980,
+                        "activeAdmins" : 8,
+                        "totalAdmins" : 15,
+                        "actionsLast24h" : 47,
+                        "pendingActions" : 3,
+                        "totalOrders" : 1580
+                      },
+                      "adminScope" : "global",
+                      "recentActivity" : [
+
+                      ],
+                      "systemHealth" : {
+                        "status" : "healthy",
+                        "database" : {
+                          "message" : "Database connection is healthy",
+                          "status" : "healthy",
+                          "responseTime" : 15.5
+                        },
+                        "authentication" : {
+                          "message" : "Authentication system operational",
+                          "status" : "healthy"
+                        }
+                      }
+                    },
+                    "summary" : "Dashboard de administrador global"
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/AdminDashboardResponseDTO"
+                }
+              }
+            }
+          },
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "403" : {
+            "$ref" : "#\/components\/responses\/ForbiddenError"
+          }
+        },
+        "tags" : [
+          "Admin Dashboard"
+        ]
+      }
+    },
+    "\/api\/v1\/devices\/{tokenID}" : {
+      "delete" : {
+        "description" : "Elimina un token de dispositivo del sistema",
+        "operationId" : "unregisterDevice",
+        "tags" : [
+          "Dispositivos"
+        ],
+        "parameters" : [
+          {
+            "description" : "ID del token de dispositivo",
+            "name" : "tokenID",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "in" : "path"
+          }
+        ],
+        "summary" : "Desregistrar dispositivo",
+        "responses" : {
+          "401" : {
+            "$ref" : "#\/components\/responses\/UnauthorizedError"
+          },
+          "204" : {
+            "description" : "Dispositivo desregistrado exitosamente"
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ]
+      }
+    },
+    "\/api\/v1\/user-roles\/manage-user-role" : {
+      "get" : {
+        "description" : "Retorna la página HTML de gestión de roles de usuario",
+        "operationId" : "manageUserRole",
+        "summary" : "Página de gestión de roles",
+        "tags" : [
+          "Roles de Usuario"
+        ],
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text\/html" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "Página HTML de gestión"
+          }
+        }
+      }
+    },
+    "\/api\/v1\/almavip\/dietary-restrictions" : {
+      "get" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "operationId" : "listDietaryRestrictions",
+        "tags" : [
+          "AlmaVip - Menu"
+        ],
+        "summary" : "Listar restricciones dietéticas",
+        "responses" : {
+          "200" : {
+            "description" : "Restricciones dietéticas",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#\/components\/schemas\/DietaryRestrictionDTO"
+                  },
+                  "type" : "array"
+                }
+              }
+            }
+          }
+        },
+        "description" : "Obtiene lista de restricciones dietéticas disponibles"
+      }
+    },
+    "\/api\/v1\/almavip\/orders\/{id}" : {
+      "put" : {
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "summary" : "Actualizar orden",
+        "description" : "Actualiza una orden existente",
+        "operationId" : "updateAlmaVipOrder",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "format" : "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          },
+          "200" : {
+            "description" : "Orden actualizada",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderDTO"
+                }
+              }
+            }
+          }
+        },
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application\/json" : {
+              "schema" : {
+                "$ref" : "#\/components\/schemas\/UpdateOrderDTO"
+              }
+            }
+          }
+        },
+        "tags" : [
+          "AlmaVip - Orders"
+        ]
+      },
+      "get" : {
+        "summary" : "Obtener orden",
+        "tags" : [
+          "AlmaVip - Orders"
+        ],
+        "operationId" : "getAlmaVipOrder",
+        "security" : [
+          {
+            "bearerAuth" : [
+
+            ]
+          }
+        ],
+        "description" : "Obtiene los detalles de una orden específica",
+        "responses" : {
+          "200" : {
+            "description" : "Orden encontrada",
+            "content" : {
+              "application\/json" : {
+                "schema" : {
+                  "$ref" : "#\/components\/schemas\/OrderDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "$ref" : "#\/components\/responses\/NotFoundError"
+          }
+        },
+        "parameters" : [
+          {
+            "in" : "path",
+            "name" : "id",
+            "required" : true,
+            "schema" : {
+              "format" : "uuid",
+              "type" : "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "info" : {
+    "description" : "API para gestión de solicitudes y administración de usuarios",
+    "contact" : {
+      "url" : "https:\/\/request-io.com",
+      "name" : "Equipo de Desarrollo",
+      "email" : "desarrollo@request-io.com"
+    },
+    "title" : "Request-IO API",
+    "version" : "1.0.0",
+    "license" : {
+      "name" : "MIT",
+      "url" : "https:\/\/opensource.org\/licenses\/MIT"
+    }
+  },
+  "servers" : [
+    {
+      "url" : "http:\/\/localhost:8080",
+      "description" : "Servidor de desarrollo local"
+    },
+    {
+      "description" : "Servidor de producción",
+      "url" : "https:\/\/api.request-io.com"
+    }
+  ]
+}
