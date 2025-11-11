@@ -6,7 +6,7 @@
 
 Swift SDK oficial para la **API de negocio completo** de Request-IO (Core + AlmaVip + Admin). Generado automáticamente desde la especificación OpenAPI 3.1.0.
 
-> **Nota**: Este SDK es para funcionalidad de negocio completo. Para administración exclusiva, ver [`request-io-swift-admin-client`](https://github.com/Byjuanamn/request-io-swift-admin-client).
+> **Nota**: Este SDK es para funcionalidad de negocio completo. Para administración exclusiva, ver [`request-io-swift-admin-client`](https://github.com/CloudOnMobile/request-io-swift-admin-client).
 
 ## Características
 
@@ -30,14 +30,14 @@ Agrega el paquete a tu `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Byjuanamn/request-io-swift-business-sdk.git", from: "1.0.0")
+    .package(url: "https://github.com/CloudOnMobile/request-io-swift-business-sdk.git", from: "1.0.0")
 ]
 ```
 
 O en Xcode:
 
 1. File → Add Package Dependencies...
-2. Pega la URL: `https://github.com/Byjuanamn/request-io-swift-business-sdk`
+2. Pega la URL: `https://github.com/CloudOnMobile/request-io-swift-business-sdk`
 3. Selecciona "Up to Next Major Version" y especifica `1.0.0`
 
 ## Uso Rápido
@@ -239,7 +239,7 @@ El SDK incluye soporte completo para:
 - 🔍 **Audit**: Logs de auditoría con análisis avanzado
 - ⚙️ **System Config**: Configuración del sistema
 
-Ver documentación completa de endpoints en [Backend Docs](https://github.com/Byjuanamn/request-io_back/tree/main/docs).
+Ver documentación completa de endpoints en [Backend Docs](https://github.com/CloudOnMobile/request-io_back/tree/main/docs).
 
 ## Troubleshooting
 
@@ -280,10 +280,10 @@ Este proyecto está licenciado bajo MIT License.
 
 ## Links
 
-- **Backend Repository**: [request-io_back](https://github.com/Byjuanamn/request-io_back)
-- **Admin SDK**: [request-io-swift-admin-client](https://github.com/Byjuanamn/request-io-swift-admin-client)
-- **API Documentation**: [Backend Docs](https://github.com/Byjuanamn/request-io_back/tree/main/docs)
-- **Issues**: [GitHub Issues](https://github.com/Byjuanamn/request-io-swift-business-sdk/issues)
+- **Backend Repository**: [request-io_back](https://github.com/CloudOnMobile/request-io_back)
+- **Admin SDK**: [request-io-swift-admin-client](https://github.com/CloudOnMobile/request-io-swift-admin-client)
+- **API Documentation**: [Backend Docs](https://github.com/CloudOnMobile/request-io_back/tree/main/docs)
+- **Issues**: [GitHub Issues](https://github.com/CloudOnMobile/request-io-swift-business-sdk/issues)
 
 ---
 
